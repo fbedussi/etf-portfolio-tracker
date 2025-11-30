@@ -1,0 +1,333 @@
+# Sprint Status Tracking
+
+# This file tracks the implementation phase progress across all sprints.
+# Updated daily during active development.
+
+project: "portfolio"
+total_story_points: 133
+total_sprints_planned: 7
+current_sprint: 1
+
+sprint_summary:
+  completed_sprints: 0
+  completed_points: 0
+  remaining_points: 133
+  overall_progress: 0%
+  average_velocity: null  # Will be calculated after Sprint 1
+
+sprints:
+  - sprint_number: 1
+    sprint_name: "Foundation & File Loading"
+    status: "planned"  # planned | in-progress | completed
+    start_date: "2025-12-02"
+    end_date: "2025-12-13"
+    duration_weeks: 2
+    
+    goals:
+      - "Establish project foundation with React + TypeScript + Vite"
+      - "Implement YAML file parsing and validation"
+      - "Create basic UI with empty state and file upload"
+      - "Set up core infrastructure (stores, types, services)"
+    
+    metrics:
+      committed_points: 22
+      completed_points: 0
+      completion_rate: 0%
+      stories_committed: 11
+      stories_completed: 0
+      velocity: null
+    
+    epics_included:
+      - epic_id: "E1"
+        epic_name: "Project Foundation & Setup"
+        points_committed: 13
+        points_completed: 0
+      - epic_id: "E2"
+        epic_name: "Portfolio Data Management"
+        points_committed: 9
+        points_completed: 0
+        note: "Partial - stories S2.1 through S2.5"
+    
+    stories:
+      - id: "S1.1"
+        title: "Initialize React + TypeScript Project"
+        epic: "E1"
+        points: 2
+        status: "not-started"  # not-started | in-progress | completed | blocked
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+        
+      - id: "S1.2"
+        title: "Install Core Dependencies"
+        epic: "E1"
+        points: 1
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 3
+        
+      - id: "S1.3"
+        title: "Configure shadcn/ui & Design System"
+        epic: "E1"
+        points: 3
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+        
+      - id: "S1.4"
+        title: "Create TypeScript Type Definitions"
+        epic: "E1"
+        points: 2
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+        
+      - id: "S1.5"
+        title: "Set Up Global State Stores"
+        epic: "E1"
+        points: 3
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+        
+      - id: "S1.6"
+        title: "Create Base Layout Components"
+        epic: "E1"
+        points: 2
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+        
+      - id: "S2.1"
+        title: "Implement YAML File Parser"
+        epic: "E2"
+        points: 3
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+        
+      - id: "S2.2"
+        title: "Implement Portfolio Data Validation"
+        epic: "E2"
+        points: 5
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 7
+        
+      - id: "S2.3"
+        title: "Build File Upload Component"
+        epic: "E2"
+        points: 3
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+        
+      - id: "S2.4"
+        title: "Create Empty State View"
+        epic: "E2"
+        points: 2
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+        
+      - id: "S2.5"
+        title: "Implement Loading State Component"
+        epic: "E2"
+        points: 2
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+    
+    risks:
+      - description: "First sprint velocity unknown"
+        severity: "medium"
+        mitigation: "Conservative estimate with buffer time"
+      - description: "Validation logic complexity"
+        severity: "medium"
+        mitigation: "Comprehensive unit tests"
+    
+    notes:
+      - "First sprint establishes baseline velocity"
+      - "Focus on quality over speed"
+      - "Deferred S2.6, S2.7, S2.8 to Sprint 2"
+
+  - sprint_number: 2
+    sprint_name: "Data Management & Price Integration Start"
+    status: "planned"
+    start_date: "2025-12-16"
+    end_date: "2025-12-27"
+    duration_weeks: 2
+    
+    goals:
+      - "Complete Portfolio Data Management epic (E2)"
+      - "Start ETF Price Integration (E3)"
+      - "Implement price API client and caching"
+    
+    metrics:
+      committed_points: 24
+      committed_points_estimate: "23-25"
+      stories_committed: 9
+      note: "Velocity adjusted based on Sprint 1 actuals"
+    
+    epics_included:
+      - epic_id: "E2"
+        epic_name: "Portfolio Data Management"
+        points_remaining: 12
+        note: "Stories S2.6 through S2.8"
+      - epic_id: "E3"
+        epic_name: "ETF Price Integration"
+        points_committed: 12
+        note: "Partial - stories S3.1 through S3.4"
+
+  - sprint_number: 3
+    sprint_name: "Price Integration & Calculations"
+    status: "planned"
+    start_date: "2025-12-30"
+    end_date: "2026-01-10"
+    duration_weeks: 2
+    
+    goals:
+      - "Complete ETF Price Integration (E3)"
+      - "Start Portfolio Calculations Engine (E4)"
+      - "Implement holdings and P&L calculations"
+    
+    metrics:
+      committed_points_estimate: "23-25"
+    
+    epics_included:
+      - epic_id: "E3"
+        epic_name: "ETF Price Integration"
+        note: "Complete remaining stories"
+      - epic_id: "E4"
+        epic_name: "Portfolio Calculations Engine"
+        note: "Partial - start calculations"
+
+  - sprint_number: 4
+    sprint_name: "Calculations & Dashboard UI Start"
+    status: "planned"
+    start_date: "2026-01-13"
+    end_date: "2026-01-24"
+    duration_weeks: 2
+    
+    goals:
+      - "Complete Portfolio Calculations (E4)"
+      - "Start Dashboard UI implementation (E5)"
+      - "Build core dashboard components"
+    
+    metrics:
+      committed_points_estimate: "23-25"
+    
+    epics_included:
+      - epic_id: "E4"
+        epic_name: "Portfolio Calculations Engine"
+        note: "Complete remaining stories"
+      - epic_id: "E5"
+        epic_name: "Dashboard UI - Core Views"
+        note: "Partial - start UI components"
+
+  - sprint_number: 5
+    sprint_name: "Dashboard UI & Rebalancing"
+    status: "planned"
+    start_date: "2026-01-27"
+    end_date: "2026-02-07"
+    duration_weeks: 2
+    
+    goals:
+      - "Complete Dashboard UI (E5)"
+      - "Implement Rebalancing Analysis (E6)"
+      - "Full functional dashboard"
+    
+    metrics:
+      committed_points_estimate: "23-25"
+    
+    epics_included:
+      - epic_id: "E5"
+        epic_name: "Dashboard UI - Core Views"
+        note: "Complete remaining stories"
+      - epic_id: "E6"
+        epic_name: "Rebalancing Analysis"
+        note: "All rebalancing features"
+
+  - sprint_number: 6
+    sprint_name: "Responsive & Theme Support"
+    status: "planned"
+    start_date: "2026-02-10"
+    end_date: "2026-02-21"
+    duration_weeks: 2
+    
+    goals:
+      - "Implement responsive layouts (E7)"
+      - "Add light/dark theme support"
+      - "Mobile and tablet optimization"
+    
+    metrics:
+      committed_points_estimate: "23-25"
+    
+    epics_included:
+      - epic_id: "E7"
+        epic_name: "Responsive & Theme Support"
+        note: "All responsive and theme stories"
+      - epic_id: "E8"
+        epic_name: "Error Handling & Offline Mode"
+        note: "Partial - start error handling"
+
+  - sprint_number: 7
+    sprint_name: "Polish & Production Readiness"
+    status: "planned"
+    start_date: "2026-02-24"
+    end_date: "2026-03-07"
+    duration_weeks: 2
+    
+    goals:
+      - "Complete Error Handling (E8)"
+      - "Comprehensive testing and bug fixes"
+      - "Performance optimization"
+      - "Production deployment preparation"
+    
+    metrics:
+      committed_points_estimate: "20-22"
+      note: "Buffer for bug fixes and polish"
+    
+    epics_included:
+      - epic_id: "E8"
+        epic_name: "Error Handling & Offline Mode"
+        note: "Complete remaining stories"
+    
+    deliverables:
+      - "Production-ready application"
+      - "Complete test coverage"
+      - "User documentation"
+      - "Deployment guide"
+
+# Team Capacity
+team:
+  size: 1
+  hours_per_week: 40
+  hours_per_sprint: 80
+  estimated_velocity: "20-25 points per sprint"
+
+# Quality Metrics
+quality_targets:
+  code_coverage: ">80%"
+  test_pass_rate: ">99%"
+  lighthouse_score: ">90"
+  bugs_per_sprint: "<5 critical"
+  pr_cycle_time: "<24 hours"
+
+# Notes
+planning_notes:
+  - "Sprint durations are 2 weeks each"
+  - "Total estimated timeline: 14 weeks (3.5 months)"
+  - "Velocity will be adjusted after Sprint 1 actuals"
+  - "Buffer time included in Sprint 7 for polish"
+  - "Continuous deployment after Sprint 3"
