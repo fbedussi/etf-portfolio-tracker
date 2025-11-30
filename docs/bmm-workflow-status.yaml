@@ -48,7 +48,7 @@ workflow_status:
     required: true
     workflows:
       - id: "prd"
-        status: "required"
+        status: "docs/prd-portfolio-tracker.md"
         agent: "pm"
         command: "prd"
         output: "Product Requirements Document with FRs and NFRs"
@@ -60,7 +60,7 @@ workflow_status:
         note: "Quality check for PRD completeness"
         
       - id: "create-design"
-        status: "conditional"
+        status: "docs/ux-design-portfolio-tracker.md"
         condition: "if_has_ui"
         agent: "ux-designer"
         command: "create-design"
@@ -71,7 +71,7 @@ workflow_status:
     required: true
     workflows:
       - id: "create-architecture"
-        status: "required"
+        status: "docs/architecture-portfolio-tracker.md"
         agent: "architect"
         command: "create-architecture"
         output: "System architecture document"
