@@ -27,15 +27,15 @@ workflow_status:
     optional: true
     workflows:
       - id: "brainstorm-project"
-        status: "optional"
+        status: "docs/bmm-brainstorming-session-2025-11-30.md"
         agent: "analyst"
         command: "brainstorm-project"
         
       - id: "research"
-        status: "optional"
+        status: "docs/research-technical-2025-11-30.md"
         agent: "analyst"
         command: "research"
-        note: "Can have multiple research workflows"
+        note: "Completed: Financial Data API research - Alpha Vantage recommended"
         
       - id: "product-brief"
         status: "optional"
