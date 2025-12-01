@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { priceService, PriceServiceError } from '@/services/priceService';
 import { cacheService } from '@/services/cacheService';
 import { usePriceStore } from '@/store/priceStore';
+import { priceRequestQueue } from '@/services/requestQueue';
 import type { PriceData } from '@/types';
 
 /**
@@ -58,35 +59,47 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
     if (tickersToFetchFromAPI.length > 0) {
       console.log(`Fetching ${tickersToFetchFromAPI.length} prices from API...`);
       
-      for (let i = 0; i < tickersToFetchFromAPI.length; i++) {
-        const ticker = tickersToFetchFromAPI[i];
-        
-        try {
-          setLoadingTickers([ticker]); // Update to show which ticker is loading
-          
-          const priceData = await priceService.fetchPrice(ticker);
-          
-          // Store in cache
-          cacheService.cachePriceData(priceData);
-          
-          // Add to results
-          newPrices[ticker] = priceData;
-          
-          // Rate limiting: wait between API calls (except for last one)
-          if (i < tickersToFetchFromAPI.length - 1) {
-            console.log(`Waiting 12s before next API call (rate limit)...`);
-            await delay(12000); // 12 seconds to stay under 5 calls/min
-          }
-        } catch (error) {
-          const errorMessage = error instanceof PriceServiceError
-            ? error.message
-            : error instanceof Error
-            ? error.message
-            : 'Unknown error occurred';
-          
-          console.error(`Error fetching ${ticker}:`, errorMessage);
-          newErrors[ticker] = errorMessage;
+      console.log(`Fetching ${tickersToFetchFromAPI.length} prices from API...`);
+
+      const unsubscribe = priceRequestQueue.onProgress((progress) => {
+        if (progress.currentTicker) {
+          setLoadingTickers([progress.currentTicker]);
+        } else if (progress.queueLength === 0) {
+          setLoadingTickers([]);
         }
+      });
+
+      try {
+        const fetchResults = await Promise.all(
+          tickersToFetchFromAPI.map((ticker) =>
+            priceRequestQueue
+              .enqueue(() => priceService.fetchPrice(ticker), ticker)
+              .then(
+                (priceData) => ({ ticker, priceData }),
+                (error) => ({ ticker, error })
+              )
+          )
+        );
+
+        for (const result of fetchResults) {
+          if ('priceData' in result) {
+            cacheService.cachePriceData(result.priceData);
+            newPrices[result.ticker] = result.priceData;
+          } else {
+            const rawError = result.error;
+            const errorMessage = rawError instanceof PriceServiceError
+              ? rawError.message
+              : rawError instanceof Error
+              ? rawError.message
+              : 'Unknown error occurred';
+
+            console.error(`Error fetching ${result.ticker}:`, errorMessage);
+            newErrors[result.ticker] = errorMessage;
+          }
+        }
+      } finally {
+        unsubscribe();
+        setLoadingTickers([]);
       }
     }
 
@@ -151,9 +164,3 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
   };
 }
 
-/**
- * Helper function for delays
- */
-function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}

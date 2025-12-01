@@ -138,7 +138,7 @@ export class PriceService {
         price,
         timestamp: Date.now(),
         currency: 'USD', // Alpha Vantage returns USD prices
-        source: 'api',
+        source: 'alphavantage',
       };
 
       console.log(`✓ Fetched ${ticker}: $${price.toFixed(2)} (as of ${tradingDay})`);
