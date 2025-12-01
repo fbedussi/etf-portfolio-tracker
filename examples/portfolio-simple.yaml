@@ -1,0 +1,37 @@
+# Simple Portfolio Example
+# A minimal valid portfolio with 2 ETFs
+
+name: "My Simple Portfolio"
+
+targetAllocation:
+  Stocks: 70
+  Bonds: 30
+
+etfs:
+  VTI:
+    name: "Vanguard Total Stock Market ETF"
+    assetClasses:
+      - name: "US Total Market"
+        category: "Stocks"
+        percentage: 100
+    transactions:
+      - date: "2024-01-15"
+        quantity: 10
+        price: 220.50
+      - date: "2024-06-15"
+        quantity: 5
+        price: 235.20
+
+  BND:
+    name: "Vanguard Total Bond Market ETF"
+    assetClasses:
+      - name: "US Aggregate Bonds"
+        category: "Bonds"
+        percentage: 100
+    transactions:
+      - date: "2024-01-15"
+        quantity: 20
+        price: 72.30
+      - date: "2024-06-15"
+        quantity: 10
+        price: 71.80

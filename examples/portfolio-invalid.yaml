@@ -1,0 +1,48 @@
+# Invalid Portfolio Example
+# This file intentionally contains errors for testing error handling
+
+name: "Invalid Portfolio"
+
+# ERROR: Target allocation doesn't sum to 100
+targetAllocation:
+  Stocks: 70
+  Bonds: 20
+  # Missing 10% - should sum to 100
+
+etfs:
+  VTI:
+    name: "Vanguard Total Stock Market ETF"
+    assetClasses:
+      # ERROR: Asset class percentages don't sum to 100
+      - name: "US Large Cap"
+        category: "Stocks"
+        percentage: 60
+      - name: "US Mid Cap"
+        category: "Stocks"
+        percentage: 30
+      # Missing 10%
+    transactions:
+      - date: "2024-01-15"
+        quantity: 10
+        price: 220.50
+
+  INVALID:
+    name: "Invalid ETF"
+    assetClasses:
+      - name: "Unknown Asset"
+        # ERROR: Category not in target allocation
+        category: "Crypto"
+        percentage: 100
+    transactions:
+      # ERROR: Invalid date format
+      - date: "01/15/2024"
+        quantity: 10
+        price: 100
+      # ERROR: Zero quantity
+      - date: "2024-02-15"
+        quantity: 0
+        price: 100
+      # ERROR: Negative price
+      - date: "2024-03-15"
+        quantity: 5
+        price: -50

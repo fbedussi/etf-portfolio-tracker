@@ -1,0 +1,128 @@
+# Comprehensive Portfolio Example
+# A complete portfolio demonstrating all features with 6 ETFs
+
+name: "Diversified Global Portfolio"
+
+targetAllocation:
+  Stocks: 60
+  Bonds: 25
+  "Real Estate": 10
+  Commodities: 5
+
+etfs:
+  VTI:
+    name: "Vanguard Total Stock Market ETF"
+    assetClasses:
+      - name: "US Large Cap"
+        category: "Stocks"
+        percentage: 70
+      - name: "US Mid Cap"
+        category: "Stocks"
+        percentage: 20
+      - name: "US Small Cap"
+        category: "Stocks"
+        percentage: 10
+    transactions:
+      - date: "2023-01-15"
+        quantity: 20
+        price: 195.50
+      - date: "2023-06-15"
+        quantity: 10
+        price: 210.30
+      - date: "2024-01-15"
+        quantity: 15
+        price: 220.50
+      - date: "2024-06-15"
+        quantity: 5
+        price: 235.20
+
+  VXUS:
+    name: "Vanguard Total International Stock ETF"
+    assetClasses:
+      - name: "Developed Markets"
+        category: "Stocks"
+        percentage: 75
+      - name: "Emerging Markets"
+        category: "Stocks"
+        percentage: 25
+    transactions:
+      - date: "2023-01-15"
+        quantity: 30
+        price: 54.20
+      - date: "2023-06-15"
+        quantity: 15
+        price: 56.80
+      - date: "2024-01-15"
+        quantity: 20
+        price: 58.90
+
+  BND:
+    name: "Vanguard Total Bond Market ETF"
+    assetClasses:
+      - name: "US Government Bonds"
+        category: "Bonds"
+        percentage: 60
+      - name: "US Corporate Bonds"
+        category: "Bonds"
+        percentage: 40
+    transactions:
+      - date: "2023-01-15"
+        quantity: 50
+        price: 75.40
+      - date: "2023-06-15"
+        quantity: 25
+        price: 73.80
+      - date: "2024-01-15"
+        quantity: 30
+        price: 72.30
+      - date: "2024-06-15"
+        quantity: 15
+        price: 71.80
+
+  BNDX:
+    name: "Vanguard Total International Bond ETF"
+    assetClasses:
+      - name: "International Government Bonds"
+        category: "Bonds"
+        percentage: 70
+      - name: "International Corporate Bonds"
+        category: "Bonds"
+        percentage: 30
+    transactions:
+      - date: "2023-06-15"
+        quantity: 40
+        price: 48.50
+      - date: "2024-01-15"
+        quantity: 20
+        price: 47.90
+
+  VNQ:
+    name: "Vanguard Real Estate ETF"
+    assetClasses:
+      - name: "US REITs"
+        category: "Real Estate"
+        percentage: 100
+    transactions:
+      - date: "2023-01-15"
+        quantity: 15
+        price: 82.30
+      - date: "2024-01-15"
+        quantity: 10
+        price: 88.50
+      - date: "2024-06-15"
+        quantity: 5
+        price: 91.20
+
+  DBC:
+    name: "Invesco DB Commodity Index Tracking Fund"
+    assetClasses:
+      - name: "Broad Commodities"
+        category: "Commodities"
+        percentage: 100
+    transactions:
+      - date: "2023-06-15"
+        quantity: 100
+        price: 18.40
+      - date: "2024-01-15"
+        quantity: 50
+        price: 19.20

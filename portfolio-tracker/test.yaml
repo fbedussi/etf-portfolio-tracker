@@ -1,0 +1,22 @@
+targetAllocation:
+  Stocks: 70
+  Bonds: 20
+  Real Estate: 10
+
+etfs:
+  VWCE:
+    name: "Vanguard FTSE All-World"
+    assetClasses:
+      - name: "US Large Cap"
+        category: "Stocks"
+        percentage: 60
+      - name: "International Equity"
+        category: "Stocks"
+        percentage: 40
+    transactions:
+      - date: "2024-01-15"
+        quantity: 10
+        price: 95.50
+      - date: "2024-06-20"
+        quantity: -3
+        price: 102.00  # Negative quantity = sell

@@ -11,6 +11,7 @@ interface PriceState {
   lastFetch: number | null;
 
   // Actions
+  setPrices: (prices: Record<string, PriceData>) => void;
   fetchPrice: (ticker: string) => Promise<void>;
   fetchPrices: (tickers: string[]) => Promise<void>;
   getCachedPrice: (ticker: string) => PriceData | null;
@@ -22,6 +23,13 @@ export const usePriceStore = create<PriceState>((set, get) => ({
   cache: {},
   isFetching: false,
   lastFetch: null,
+
+  setPrices: (newPrices: Record<string, PriceData>) => {
+    set({
+      prices: { ...get().prices, ...newPrices },
+      lastFetch: Date.now(),
+    });
+  },
 
   fetchPrice: async (ticker: string) => {
     await get().fetchPrices([ticker]);

@@ -21,6 +21,7 @@ interface PortfolioState {
   error: string | null;
 
   // Actions
+  setPortfolio: (portfolio: Portfolio) => void;
   loadPortfolio: (file: File) => Promise<void>;
   refreshPrices: () => Promise<void>;
   clearPortfolio: () => void;
@@ -35,6 +36,13 @@ export const usePortfolioStore = create<PortfolioState>((set, get) => ({
   isLoading: false,
   isFetchingPrices: false,
   error: null,
+
+  setPortfolio: (portfolio: Portfolio) => {
+    set({ 
+      portfolio,
+      error: null,
+    });
+  },
 
   loadPortfolio: async (_file: File) => {
     set({ isLoading: true, error: null });

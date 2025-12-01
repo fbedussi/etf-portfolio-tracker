@@ -6,19 +6,19 @@
 project: "portfolio"
 total_story_points: 133
 total_sprints_planned: 7
-current_sprint: 1
+current_sprint: 2
 
 sprint_summary:
-  completed_sprints: 0
-  completed_points: 0
-  remaining_points: 133
-  overall_progress: 0%
-  average_velocity: null  # Will be calculated after Sprint 1
+  completed_sprints: 1
+  completed_points: 29
+  remaining_points: 104
+  overall_progress: 21.8%
+  average_velocity: 23  # Based on Sprint 1 & 2 (partial)
 
 sprints:
   - sprint_number: 1
     sprint_name: "Foundation & File Loading"
-    status: "planned"  # planned | in-progress | completed
+    status: "completed"  # planned | in-progress | completed
     start_date: "2025-12-02"
     end_date: "2025-12-13"
     duration_weeks: 2
@@ -31,94 +31,95 @@ sprints:
     
     metrics:
       committed_points: 22
-      completed_points: 0
-      completion_rate: 0%
+      completed_points: 15
+      completion_rate: 68%
       stories_committed: 11
-      stories_completed: 0
-      velocity: null
+      stories_completed: 8
+      velocity: 15
+      note: "UI components S2.3-S2.5 deferred"
     
     epics_included:
       - epic_id: "E1"
         epic_name: "Project Foundation & Setup"
         points_committed: 13
-        points_completed: 0
+        points_completed: 13
       - epic_id: "E2"
         epic_name: "Portfolio Data Management"
         points_committed: 9
-        points_completed: 0
-        note: "Partial - stories S2.1 through S2.5"
+        points_completed: 8
+        note: "Partial - S2.1, S2.2 completed; S2.3-S2.5 deferred"
     
     stories:
       - id: "S1.1"
         title: "Initialize React + TypeScript Project"
         epic: "E1"
         points: 2
-        status: "not-started"  # not-started | in-progress | completed | blocked
+        status: "completed"  # not-started | in-progress | completed | blocked
         assignee: "Dev Team"
-        acceptance_criteria_met: 0
+        acceptance_criteria_met: 4
         acceptance_criteria_total: 4
         
       - id: "S1.2"
         title: "Install Core Dependencies"
         epic: "E1"
         points: 1
-        status: "not-started"
+        status: "completed"
         assignee: "Dev Team"
-        acceptance_criteria_met: 0
+        acceptance_criteria_met: 3
         acceptance_criteria_total: 3
         
       - id: "S1.3"
         title: "Configure shadcn/ui & Design System"
         epic: "E1"
         points: 3
-        status: "not-started"
+        status: "completed"
         assignee: "Dev Team"
-        acceptance_criteria_met: 0
+        acceptance_criteria_met: 4
         acceptance_criteria_total: 4
         
       - id: "S1.4"
         title: "Create TypeScript Type Definitions"
         epic: "E1"
         points: 2
-        status: "not-started"
+        status: "completed"
         assignee: "Dev Team"
-        acceptance_criteria_met: 0
+        acceptance_criteria_met: 4
         acceptance_criteria_total: 4
         
       - id: "S1.5"
         title: "Set Up Global State Stores"
         epic: "E1"
         points: 3
-        status: "not-started"
+        status: "completed"
         assignee: "Dev Team"
-        acceptance_criteria_met: 0
+        acceptance_criteria_met: 4
         acceptance_criteria_total: 4
         
       - id: "S1.6"
         title: "Create Base Layout Components"
         epic: "E1"
         points: 2
-        status: "not-started"
+        status: "completed"
         assignee: "Dev Team"
-        acceptance_criteria_met: 0
+        acceptance_criteria_met: 4
         acceptance_criteria_total: 4
         
       - id: "S2.1"
         title: "Implement YAML File Parser"
         epic: "E2"
         points: 3
-        status: "not-started"
+        status: "completed"
         assignee: "Dev Team"
-        acceptance_criteria_met: 0
+        acceptance_criteria_met: 4
         acceptance_criteria_total: 4
         
       - id: "S2.2"
         title: "Implement Portfolio Data Validation"
         epic: "E2"
         points: 5
-        status: "not-started"
+        status: "completed"
         assignee: "Dev Team"
-        acceptance_criteria_met: 0
+        acceptance_criteria_met: 7
         acceptance_criteria_total: 7
         
       - id: "S2.3"
@@ -129,6 +130,7 @@ sprints:
         assignee: "Dev Team"
         acceptance_criteria_met: 0
         acceptance_criteria_total: 4
+        note: "UI component not yet implemented"
         
       - id: "S2.4"
         title: "Create Empty State View"
@@ -138,6 +140,7 @@ sprints:
         assignee: "Dev Team"
         acceptance_criteria_met: 0
         acceptance_criteria_total: 4
+        note: "UI component not yet implemented"
         
       - id: "S2.5"
         title: "Implement Loading State Component"
@@ -147,6 +150,7 @@ sprints:
         assignee: "Dev Team"
         acceptance_criteria_met: 0
         acceptance_criteria_total: 4
+        note: "UI component not yet implemented"
     
     risks:
       - description: "First sprint velocity unknown"
@@ -163,9 +167,9 @@ sprints:
 
   - sprint_number: 2
     sprint_name: "Data Management & Price Integration Start"
-    status: "planned"
-    start_date: "2025-12-16"
-    end_date: "2025-12-27"
+    status: "in-progress"
+    start_date: "2025-11-30"
+    end_date: "2025-12-13"
     duration_weeks: 2
     
     goals:
@@ -175,19 +179,127 @@ sprints:
     
     metrics:
       committed_points: 24
-      committed_points_estimate: "23-25"
+      completed_points: 14
+      completion_rate: 58%
       stories_committed: 9
-      note: "Velocity adjusted based on Sprint 1 actuals"
+      stories_completed: 5
+      velocity: 14
+      note: "Services/hooks complete; UI components pending"
     
     epics_included:
       - epic_id: "E2"
         epic_name: "Portfolio Data Management"
-        points_remaining: 12
-        note: "Stories S2.6 through S2.8"
+        points_committed: 6
+        points_completed: 1
+        note: "Partial - S2.8 complete; S2.6, S2.7 pending (need UI)"
       - epic_id: "E3"
         epic_name: "ETF Price Integration"
-        points_committed: 12
-        note: "Partial - stories S3.1 through S3.4"
+        points_committed: 18
+        points_completed: 13
+        note: "Partial - S3.1-S3.4 complete; S3.5-S3.6 pending"
+    
+    stories:
+      - id: "S2.6"
+        title: "Build useFileUpload Custom Hook"
+        epic: "E2"
+        points: 3
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 6
+        note: "Blocked - requires S2.3 File Upload Component"
+        
+      - id: "S2.7"
+        title: "Implement Error Display Component"
+        epic: "E2"
+        points: 2
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 5
+        note: "UI component pending"
+        
+      - id: "S2.8"
+        title: "Create Portfolio File Examples"
+        epic: "E2"
+        points: 1
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 4
+        acceptance_criteria_total: 4
+        
+      - id: "S3.1"
+        title: "Create API Configuration"
+        epic: "E3"
+        points: 1
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 4
+        acceptance_criteria_total: 4
+        
+      - id: "S3.2"
+        title: "Implement Price API Client"
+        epic: "E3"
+        points: 5
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        
+      - id: "S3.3"
+        title: "Build Price Cache Service"
+        epic: "E3"
+        points: 3
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        
+      - id: "S3.4"
+        title: "Create usePrices Custom Hook"
+        epic: "E3"
+        points: 3
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        
+      - id: "S3.5"
+        title: "Implement Request Queue for Rate Limiting"
+        epic: "E3"
+        points: 3
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+        note: "Service layer ready; needs integration"
+        
+      - id: "S3.6"
+        title: "Add Refresh Prices Button"
+        epic: "E3"
+        points: 2
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 4
+        note: "UI component pending"
+    
+    risks:
+      - description: "API rate limits may require careful queue management"
+        severity: "medium"
+        mitigation: "Implemented robust request queue with 12s delay"
+        status: "mitigated"
+      - description: "Cache invalidation complexity"
+        severity: "low"
+        mitigation: "Simple time-based expiration (15 min)"
+        status: "mitigated"
+    
+    notes:
+      - "Core services and backend logic completed"
+      - "Price fetching and caching services implemented"
+      - "UI components deferred - no file upload interface yet"
+      - "S2.3-S2.5 (UI), S2.6 (hook), S2.7 (error UI) need implementation"
+      - "Need to build actual user interface for portfolio loading"
 
   - sprint_number: 3
     sprint_name: "Price Integration & Calculations"

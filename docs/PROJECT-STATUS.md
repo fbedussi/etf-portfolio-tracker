@@ -1,8 +1,8 @@
 # Portfolio Tracker - Project Status
 
 **Last Updated:** 2025-11-30  
-**Current Phase:** Implementation (Sprint 1)  
-**Overall Status:** ✅ Ready to Build
+**Current Phase:** Implementation (Sprint 2)  
+**Overall Status:** 🚀 In Progress
 
 ---
 
@@ -69,14 +69,26 @@
 
 ## 🚀 Sprint Status
 
-### Current Sprint: Sprint 1
-**Duration:** Dec 2-13, 2025 (2 weeks)  
-**Goal:** Foundation & File Loading  
-**Committed:** 22 points, 11 stories
+### Current Sprint: Sprint 2
+**Duration:** Nov 30 - Dec 13, 2025 (2 weeks)  
+**Goal:** Data Management & Price Integration Start  
+**Committed:** 24 points, 9 stories
 
-**Progress:** Not Started (Sprint begins Dec 2)
+**Progress:** In Progress (Day 1)
 
 **Stories:**
+- 🔄 E2: Portfolio Data Management - Complete (3 stories, 6 pts)
+- 🔄 E3: ETF Price Integration - Start (6 stories, 18 pts - 12 pts this sprint)
+
+### Completed Sprints
+
+#### Sprint 1: Foundation & File Loading ✅
+**Duration:** Dec 2-13, 2025 (2 weeks)  
+**Delivered:** 22 points, 11 stories  
+**Velocity:** 22 points  
+**Status:** 100% Complete
+
+**Completed Stories:**
 - ✅ E1: Project Foundation (6 stories, 13 pts)
 - ✅ E2: Data Management - Partial (5 stories, 9 pts)
 
@@ -90,10 +102,10 @@
 - ✅ **Phase 2: Solutioning** - Architecture, Epics, Test Design, Readiness
 
 ### Current Phase 🔄
-- **Phase 3: Implementation** - Sprint 1 (Dec 2-13)
+- **Phase 3: Implementation** - Sprint 2 (Nov 30 - Dec 13)
 
 ### Upcoming Sprints 📅
-- **Sprint 2** (Dec 16-27): Complete E2, start E3 (Price Integration)
+- **Sprint 3** (Dec 16-27): Complete E3, start E4 (Calculations)
 - **Sprint 3** (Dec 30-Jan 10): Complete E3, start E4 (Calculations)
 - **Sprint 4** (Jan 13-24): Complete E4, start E5 (Dashboard UI)
 - **Sprint 5** (Jan 27-Feb 7): Complete E5, E6 (Rebalancing)
