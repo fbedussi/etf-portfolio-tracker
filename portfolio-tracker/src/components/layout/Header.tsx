@@ -1,15 +1,19 @@
-import { Moon, Sun, MoreVertical, RefreshCw } from 'lucide-react';
+import { Moon, Sun, MoreVertical, RefreshCw, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useUIStore } from '@/store';
 import { usePrices } from '@/hooks/usePrices';
 import { usePriceStore } from '@/store/priceStore';
+import { usePortfolioStore } from '@/store/portfolioStore';
 import { formatRelativeTime } from '@/utils/formatters';
 
 export function Header() {
   const { theme, setTheme } = useUIStore();
   const { refreshPrices, isLoading, lastUpdated } = usePrices();
   const prices = usePriceStore((state) => state.prices);
+  const clearAllPrices = usePriceStore((state) => state.clearAllPrices);
+  const portfolio = usePortfolioStore((state) => state.portfolio);
+  const clearPortfolio = usePortfolioStore((state) => state.clearPortfolio);
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
@@ -17,6 +21,11 @@ export function Header() {
 
   const handleRefreshPrices = async () => {
     await refreshPrices();
+  };
+
+  const handleLoadDifferentPortfolio = () => {
+    clearPortfolio();
+    clearAllPrices();
   };
 
   // Determine price source - if all prices are from cache, show "Cached", otherwise "Live"
@@ -49,6 +58,20 @@ export function Header() {
           </div>
 
           <nav className="flex items-center gap-2">
+            {/* Load Different Portfolio button - only show when portfolio is loaded */}
+            {portfolio && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLoadDifferentPortfolio}
+                aria-label="Load different portfolio"
+                className="hidden sm:flex"
+              >
+                <FolderOpen className="h-4 w-4 mr-2" />
+                Load Different Portfolio
+              </Button>
+            )}
+
             {/* Price refresh section */}
             <div className="hidden md:flex items-center gap-2 mr-2 text-sm text-muted-foreground">
               {lastUpdated && (

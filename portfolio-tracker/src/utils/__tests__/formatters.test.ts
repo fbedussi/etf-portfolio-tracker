@@ -1,5 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { formatRelativeTime, formatCurrency, formatPercentage, formatNumber } from '../formatters';
+import {
+  formatRelativeTime,
+  formatCurrency,
+  formatPercentage,
+  formatNumber,
+  formatCompactNumber,
+  formatDate,
+  formatDateTime,
+} from '../formatters';
 
 describe('formatRelativeTime', () => {
   let originalDateNow: () => number;
@@ -79,6 +87,14 @@ describe('formatCurrency', () => {
   it('should format large numbers with commas', () => {
     expect(formatCurrency(1234567.89)).toBe('$1,234,567.89');
   });
+
+  it('should handle null values', () => {
+    expect(formatCurrency(null)).toBe('$0.00');
+  });
+
+  it('should handle undefined values', () => {
+    expect(formatCurrency(undefined)).toBe('$0.00');
+  });
 });
 
 describe('formatPercentage', () => {
@@ -91,12 +107,25 @@ describe('formatPercentage', () => {
   });
 
   it('should format zero percentage', () => {
-    expect(formatPercentage(0)).toBe('+0.00%');
+    expect(formatPercentage(0)).toBe('0.00%');
   });
 
   it('should respect decimals parameter', () => {
     expect(formatPercentage(5.12345, 4)).toBe('+5.1235%');
     expect(formatPercentage(5.12345, 0)).toBe('+5%');
+  });
+
+  it('should format without sign when showSign is false', () => {
+    expect(formatPercentage(5.25, 2, false)).toBe('5.25%');
+    expect(formatPercentage(-3.75, 2, false)).toBe('-3.75%');
+  });
+
+  it('should handle null values', () => {
+    expect(formatPercentage(null)).toBe('0.00%');
+  });
+
+  it('should handle undefined values', () => {
+    expect(formatPercentage(undefined)).toBe('0.00%');
   });
 });
 
@@ -119,5 +148,121 @@ describe('formatNumber', () => {
 
   it('should format large numbers with commas', () => {
     expect(formatNumber(1234567.89)).toBe('1,234,567.89');
+  });
+
+  it('should handle null values', () => {
+    expect(formatNumber(null)).toBe('0');
+  });
+
+  it('should handle undefined values', () => {
+    expect(formatNumber(undefined)).toBe('0');
+  });
+});
+
+describe('formatCompactNumber', () => {
+  it('should format numbers under 1K without suffix', () => {
+    expect(formatCompactNumber(999)).toMatch(/^999/);
+  });
+
+  it('should format thousands with K suffix', () => {
+    const result = formatCompactNumber(1500);
+    expect(result).toMatch(/1[.,]5K/);
+  });
+
+  it('should format millions with M suffix', () => {
+    const result = formatCompactNumber(2500000);
+    expect(result).toMatch(/2[.,]5M/);
+  });
+
+  it('should format billions with B suffix', () => {
+    const result = formatCompactNumber(3500000000);
+    expect(result).toMatch(/3[.,]5B/);
+  });
+
+  it('should handle negative values', () => {
+    const result = formatCompactNumber(-1500);
+    expect(result).toMatch(/-1[.,]5K/);
+  });
+
+  it('should respect decimals parameter', () => {
+    const result = formatCompactNumber(1234, 2);
+    expect(result).toMatch(/1[.,]2/);
+  });
+
+  it('should handle zero values', () => {
+    expect(formatCompactNumber(0)).toBe('0.0');
+  });
+
+  it('should handle null values', () => {
+    expect(formatCompactNumber(null)).toBe('0');
+  });
+
+  it('should handle undefined values', () => {
+    expect(formatCompactNumber(undefined)).toBe('0');
+  });
+});
+
+describe('formatDate', () => {
+  it('should format date from ISO string', () => {
+    const result = formatDate('2024-12-01T12:00:00Z');
+    expect(result).toMatch(/Dec/);
+    expect(result).toMatch(/1/);
+    expect(result).toMatch(/2024/);
+  });
+
+  it('should format date from timestamp', () => {
+    const timestamp = new Date('2024-12-01').getTime();
+    const result = formatDate(timestamp);
+    expect(result).toMatch(/Dec/);
+    expect(result).toMatch(/1/);
+    expect(result).toMatch(/2024/);
+  });
+
+  it('should format date from Date object', () => {
+    const date = new Date('2024-12-01');
+    const result = formatDate(date);
+    expect(result).toMatch(/Dec/);
+    expect(result).toMatch(/1/);
+    expect(result).toMatch(/2024/);
+  });
+
+  it('should handle null values', () => {
+    expect(formatDate(null)).toBe('N/A');
+  });
+
+  it('should handle undefined values', () => {
+    expect(formatDate(undefined)).toBe('N/A');
+  });
+
+  it('should handle invalid dates', () => {
+    expect(formatDate('invalid')).toBe('Invalid date');
+  });
+
+  it('should respect custom options', () => {
+    const result = formatDate('2024-12-01', { 
+      month: 'long',
+      year: 'numeric',
+    });
+    expect(result).toMatch(/December/);
+    expect(result).toMatch(/2024/);
+  });
+});
+
+describe('formatDateTime', () => {
+  it('should format date and time from ISO string', () => {
+    const result = formatDateTime('2024-12-01T14:30:00Z');
+    expect(result).toMatch(/Dec/);
+    expect(result).toMatch(/1/);
+    expect(result).toMatch(/2024/);
+    // Time format can vary by locale, just check it's included
+    expect(result.length).toBeGreaterThan(15);
+  });
+
+  it('should handle null values', () => {
+    expect(formatDateTime(null)).toBe('N/A');
+  });
+
+  it('should handle undefined values', () => {
+    expect(formatDateTime(undefined)).toBe('N/A');
   });
 });

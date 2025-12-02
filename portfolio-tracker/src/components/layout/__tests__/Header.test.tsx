@@ -15,6 +15,13 @@ vi.mock('@/store/priceStore', () => ({
   usePriceStore: vi.fn(() => ({})),
 }));
 
+vi.mock('@/store/portfolioStore', () => ({
+  usePortfolioStore: vi.fn(() => ({
+    portfolio: null,
+    clearPortfolio: vi.fn(),
+  })),
+}));
+
 vi.mock('@/hooks/usePrices', () => ({
   usePrices: vi.fn(() => ({
     refreshPrices: vi.fn(),
@@ -293,6 +300,151 @@ describe('Header', () => {
       await user.click(themeButton);
 
       expect(mockSetTheme).toHaveBeenCalledWith('light');
+    });
+  });
+
+  describe('Load Different Portfolio Button', () => {
+    it('should not display button when portfolio is not loaded', async () => {
+      const portfolioStoreModule = await import('@/store/portfolioStore');
+      
+      // Mock the usePortfolioStore to use a selector function
+      vi.mocked(portfolioStoreModule.usePortfolioStore).mockImplementation((selector: any) => {
+        const state = {
+          portfolio: null,
+          clearPortfolio: vi.fn(),
+        };
+        return selector ? selector(state) : state;
+      });
+
+      render(<Header />);
+      expect(screen.queryByRole('button', { name: /load different portfolio/i })).not.toBeInTheDocument();
+    });
+
+    it('should display button when portfolio is loaded', async () => {
+      const portfolioStoreModule = await import('@/store/portfolioStore');
+      
+      vi.mocked(portfolioStoreModule.usePortfolioStore).mockImplementation((selector: any) => {
+        const state = {
+          portfolio: {
+            currency: 'USD',
+            etfs: [
+              {
+                ticker: 'VWCE',
+                name: 'Vanguard FTSE All-World',
+                quantity: 100,
+                buyPrice: 100,
+                category: 'equity',
+              },
+            ],
+          },
+          clearPortfolio: vi.fn(),
+        };
+        return selector ? selector(state) : state;
+      });
+
+      render(<Header />);
+      expect(screen.getByRole('button', { name: /load different portfolio/i })).toBeInTheDocument();
+    });
+
+    it('should call clearPortfolio and clearAllPrices when clicked', async () => {
+      const mockClearPortfolio = vi.fn();
+      const mockClearAllPrices = vi.fn();
+
+      const portfolioStoreModule = await import('@/store/portfolioStore');
+      const priceStoreModule = await import('@/store/priceStore');
+
+      // Create mock implementation that returns different values based on the selector
+      vi.mocked(portfolioStoreModule.usePortfolioStore).mockImplementation((selector: any) => {
+        const state = {
+          portfolio: {
+            currency: 'USD',
+            etfs: [
+              {
+                ticker: 'VWCE',
+                name: 'Vanguard FTSE All-World',
+                quantity: 100,
+                buyPrice: 100,
+                category: 'equity',
+              },
+            ],
+          },
+          clearPortfolio: mockClearPortfolio,
+        };
+        return selector ? selector(state) : state;
+      });
+
+      vi.mocked(priceStoreModule.usePriceStore).mockImplementation((selector: any) => {
+        const state = {
+          prices: {},
+          clearAllPrices: mockClearAllPrices,
+        };
+        return selector ? selector(state) : state;
+      });
+
+      const user = userEvent.setup();
+      render(<Header />);
+
+      const loadButton = screen.getByRole('button', { name: /load different portfolio/i });
+      await user.click(loadButton);
+
+      await waitFor(() => {
+        expect(mockClearPortfolio).toHaveBeenCalledTimes(1);
+        expect(mockClearAllPrices).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('should clear portfolio state correctly', async () => {
+      const mockClearPortfolio = vi.fn();
+      const mockClearAllPrices = vi.fn();
+
+      const portfolioStoreModule = await import('@/store/portfolioStore');
+      const priceStoreModule = await import('@/store/priceStore');
+
+      vi.mocked(portfolioStoreModule.usePortfolioStore).mockImplementation((selector: any) => {
+        const state = {
+          portfolio: {
+            currency: 'USD',
+            etfs: [
+              {
+                ticker: 'VWCE',
+                name: 'Vanguard FTSE All-World',
+                quantity: 100,
+                buyPrice: 100,
+                category: 'equity',
+              },
+            ],
+          },
+          clearPortfolio: mockClearPortfolio,
+        };
+        return selector ? selector(state) : state;
+      });
+
+      vi.mocked(priceStoreModule.usePriceStore).mockImplementation((selector: any) => {
+        const state = {
+          prices: {
+            VWCE: { ticker: 'VWCE', price: 100, timestamp: Date.now(), currency: 'USD', source: 'api' },
+          },
+          clearAllPrices: mockClearAllPrices,
+        };
+        return selector ? selector(state) : state;
+      });
+
+      const user = userEvent.setup();
+      render(<Header />);
+
+      const loadButton = screen.getByRole('button', { name: /load different portfolio/i });
+      
+      // Verify state before clicking
+      expect(mockClearPortfolio).not.toHaveBeenCalled();
+      expect(mockClearAllPrices).not.toHaveBeenCalled();
+
+      await user.click(loadButton);
+
+      // Verify both clear functions were called
+      await waitFor(() => {
+        expect(mockClearPortfolio).toHaveBeenCalled();
+        expect(mockClearAllPrices).toHaveBeenCalled();
+      });
     });
   });
 });

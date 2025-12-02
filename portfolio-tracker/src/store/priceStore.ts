@@ -16,6 +16,7 @@ interface PriceState {
   fetchPrices: (tickers: string[]) => Promise<void>;
   getCachedPrice: (ticker: string) => PriceData | null;
   clearCache: () => void;
+  clearAllPrices: () => void;
 }
 
 export const usePriceStore = create<PriceState>((set, get) => ({
@@ -77,5 +78,14 @@ export const usePriceStore = create<PriceState>((set, get) => ({
 
   clearCache: () => {
     set({ cache: {}, prices: {} });
+  },
+
+  clearAllPrices: () => {
+    set({
+      prices: {},
+      cache: {},
+      isFetching: false,
+      lastFetch: null,
+    });
   },
 }));
