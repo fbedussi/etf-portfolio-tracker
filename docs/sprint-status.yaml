@@ -6,14 +6,14 @@
 project: "portfolio"
 total_story_points: 133
 total_sprints_planned: 7
-current_sprint: 3
+current_sprint: 4
 
 sprint_summary:
-  completed_sprints: 2
-  completed_points: 38
-  remaining_points: 95
-  overall_progress: 28.6%
-  average_velocity: 21  # Based on Sprint 1 (15) & Sprint 2 (23)
+  completed_sprints: 3
+  completed_points: 60
+  remaining_points: 73
+  overall_progress: 45.1%
+  average_velocity: 19  # Based on Sprint 1 (15), Sprint 2 (23), Sprint 3 (19)
 
 sprints:
   - sprint_number: 1
@@ -309,26 +309,136 @@ sprints:
 
   - sprint_number: 3
     sprint_name: "Price Integration & Calculations"
-    status: "in-progress"
+    status: "completed"
     start_date: "2025-12-02"
     end_date: "2025-12-16"
     duration_weeks: 2
     
     goals:
       - "Complete ETF Price Integration (E3)"
-      - "Start Portfolio Calculations Engine (E4)"
-      - "Implement holdings and P&L calculations"
+      - "Complete Portfolio Calculations Engine (E4)"
+      - "Implement holdings, P&L, and allocation calculations"
     
     metrics:
-      committed_points_estimate: "23-25"
+      committed_points: 19
+      completed_points: 19
+      completion_rate: 100%
+      stories_committed: 8
+      stories_completed: 8
+      velocity: 19
+      note: "Sprint complete! E3 & E4 done: price integration + full calculation engine, 205 tests passing"
     
     epics_included:
       - epic_id: "E3"
         epic_name: "ETF Price Integration"
-        note: "Complete remaining stories"
+        points_committed: 3
+        points_completed: 3
+        note: "Complete! S3.6 (Refresh Button) & S3.7 (Price Metadata with source badges) done"
       - epic_id: "E4"
         epic_name: "Portfolio Calculations Engine"
-        note: "Partial - start calculations"
+        points_committed: 16
+        points_completed: 16
+        note: "Complete! All calculations (holdings, value, P&L, allocation) + utilities + usePortfolio hook"
+    
+    stories:
+      - id: "S3.6"
+        title: "Add Refresh Prices Button"
+        epic: "E3"
+        points: 2
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        note: "Complete - Refresh button with loading state, timestamp display, 35 tests passing"
+        
+      - id: "S3.7"
+        title: "Display Price Metadata"
+        epic: "E3"
+        points: 1
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 5
+        acceptance_criteria_total: 5
+        note: "Complete - Timestamp with relative time + Live/Cached/Mixed badges, 4 new tests"
+        
+      - id: "S4.1"
+        title: "Implement Holdings Calculation"
+        epic: "E4"
+        points: 3
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        note: "Complete - portfolioService.ts with calculateHoldings, 13 comprehensive tests passing"
+        
+      - id: "S4.2"
+        title: "Implement Portfolio Value Calculation"
+        epic: "E4"
+        points: 2
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        note: "Complete - calculatePortfolioValue with 7 tests, handles missing prices gracefully"
+        
+      - id: "S4.3"
+        title: "Implement Profit/Loss Calculation"
+        epic: "E4"
+        points: 2
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 5
+        acceptance_criteria_total: 5
+        note: "Complete - calculateProfitLoss & calculateETFProfitLoss with 16 tests, handles edge cases"
+        
+      - id: "S4.4"
+        title: "Implement Asset Class Allocation Calculation"
+        epic: "E4"
+        points: 5
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        note: "Complete - calculateAllocation with 12 tests, weighted distribution across categories"
+        
+      - id: "S4.5"
+        title: "Build usePortfolio Custom Hook"
+        epic: "E4"
+        points: 3
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        note: "Complete - usePortfolio hook orchestrates all calculations with useMemo optimization, 9 comprehensive tests"
+        
+      - id: "S4.6"
+        title: "Create Calculation Utility Functions"
+        epic: "E4"
+        points: 1
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        note: "Complete - calculations.ts with 6 utility functions, 44 comprehensive tests"
+    
+    risks:
+      - description: "Calculation complexity and accuracy"
+        severity: "high"
+        mitigation: "Comprehensive unit tests, manual verification against spreadsheets"
+      - description: "Floating point precision issues"
+        severity: "medium"
+        mitigation: "Proper rounding utilities, edge case testing"
+      - description: "Performance with large portfolios"
+        severity: "low"
+        mitigation: "Memoization in usePortfolio hook, performance testing"
+    
+    notes:
+      - "Conservative commitment: 19 points (below 21 avg velocity)"
+      - "Focus on quality - calculations must be accurate"
+      - "Comprehensive testing critical for calculation logic"
+      - "Sprint 3 plan document created in sprint-artifacts/"
+      - "E3 completion enables full price integration UI"
+      - "E4 foundation enables Dashboard UI in Sprint 4"
 
   - sprint_number: 4
     sprint_name: "Calculations & Dashboard UI Start"

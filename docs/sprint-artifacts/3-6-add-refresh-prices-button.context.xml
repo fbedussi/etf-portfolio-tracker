@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Story Context File
+  Generated: 2025-12-02
+  Story: 3.6 - Add Refresh Prices Button
+  Epic: E3 - ETF Price Integration
+  Status: ready-for-dev
+-->
+
+<story-context>
+  <metadata>
+    <story-id>3.6</story-id>
+    <story-key>3-6-add-refresh-prices-button</story-key>
+    <title>Add Refresh Prices Button</title>
+    <epic>E3 - ETF Price Integration</epic>
+    <priority>P0</priority>
+    <points>2</points>
+    <status>ready-for-dev</status>
+  </metadata>
+
+  <user-story>
+    <as-a>portfolio tracker user</as-a>
+    <i-want>a button to manually refresh ETF prices</i-want>
+    <so-that>I can get the latest market data on-demand and bypass the cache when needed</so-that>
+  </user-story>
+
+  <acceptance-criteria>
+    <criterion id="AC1" title="Refresh Button UI Component">
+      <item id="AC1.1">Refresh button added to Header component (or Dashboard, near portfolio value)</item>
+      <item id="AC1.2">Button displays a refresh icon (e.g., ↻ or similar icon from icon library)</item>
+      <item id="AC1.3">Button is prominently visible but not intrusive to main content</item>
+      <item id="AC1.4">Button has accessible label/aria-label: "Refresh Prices"</item>
+    </criterion>
+
+    <criterion id="AC2" title="Refresh Button Behavior">
+      <item id="AC2.1">Clicking button calls `usePrices.refreshPrices()` method</item>
+      <item id="AC2.2">Button enters disabled state while refresh is in progress</item>
+      <item id="AC2.3">Loading spinner or rotating icon animation displayed during refresh</item>
+      <item id="AC2.4">Button re-enables after refresh completes (success or error)</item>
+    </criterion>
+
+    <criterion id="AC3" title="Last Updated Timestamp Display">
+      <item id="AC3.1">Display shows "Prices updated X minutes ago" text</item>
+      <item id="AC3.2">Timestamp updates after successful refresh</item>
+      <item id="AC3.3">Uses relative time format (e.g., "2 minutes ago", "just now")</item>
+      <item id="AC3.4">Timestamp shown near refresh button or portfolio value card</item>
+    </criterion>
+
+    <criterion id="AC4" title="Success/Error Feedback">
+      <item id="AC4.1">Success: timestamp updates, optional subtle success indicator</item>
+      <item id="AC4.2">Error: display error message if refresh fails</item>
+      <item id="AC4.3">Partial failure: show which tickers succeeded/failed</item>
+      <item id="AC4.4">Error states don't break UI, user can retry</item>
+    </criterion>
+
+    <criterion id="AC5" title="Responsive &amp; Accessible">
+      <item id="AC5.1">Button is touch-friendly on mobile (minimum 44px tap target)</item>
+      <item id="AC5.2">Button accessible via keyboard (focusable, Enter/Space to activate)</item>
+      <item id="AC5.3">Loading state announced to screen readers</item>
+      <item id="AC5.4">Works across all breakpoints (mobile, tablet, desktop)</item>
+    </criterion>
+
+    <criterion id="AC6" title="Testing">
+      <item id="AC6.1">Component unit tests for button states (idle, loading, disabled)</item>
+      <item id="AC6.2">Integration test: button click triggers refresh logic</item>
+      <item id="AC6.3">Test error handling scenarios</item>
+      <item id="AC6.4">Manual testing on multiple devices/browsers</item>
+    </criterion>
+  </acceptance-criteria>
+
+  <tasks>
+    <task id="1" acs="AC1,AC2,AC5" title="Add Refresh Button to Header Component">
+      <subtask id="1.1">Import `usePrices` hook into Header component</subtask>
+      <subtask id="1.2">Add refresh button JSX with icon (use lucide-react or similar)</subtask>
+      <subtask id="1.3">Wire onClick handler to call `refreshPrices()` method</subtask>
+      <subtask id="1.4">Implement loading state (disabled + spinner icon)</subtask>
+      <subtask id="1.5">Style button consistent with shadcn/ui design system</subtask>
+      <subtask id="1.6">Ensure 44px minimum touch target size</subtask>
+      <subtask id="1.7">Add aria-label and keyboard accessibility attributes</subtask>
+    </task>
+
+    <task id="2" acs="AC3" title="Implement Last Updated Timestamp Display">
+      <subtask id="2.1">Create utility function `formatRelativeTime(timestamp)` in `utils/formatters.ts`</subtask>
+      <subtask id="2.2">Get last updated timestamp from `priceStore`</subtask>
+      <subtask id="2.3">Add timestamp display component/element near button</subtask>
+      <subtask id="2.4">Format timestamp using relative time utility</subtask>
+      <subtask id="2.5">Update timestamp reactively when `priceStore` changes</subtask>
+      <subtask id="2.6">Handle missing/null timestamp gracefully ("Never updated")</subtask>
+    </task>
+
+    <task id="3" acs="AC4" title="Add Success/Error Feedback">
+      <subtask id="3.1">Handle successful refresh: update timestamp, optional toast notification</subtask>
+      <subtask id="3.2">Handle error state: display error message from `usePrices` errors</subtask>
+      <subtask id="3.3">Show partial failure details (which tickers failed)</subtask>
+      <subtask id="3.4">Ensure UI remains functional after errors (no broken states)</subtask>
+      <subtask id="3.5">Add retry capability for failed refreshes</subtask>
+    </task>
+
+    <task id="4" acs="AC6" title="Write Component Tests">
+      <subtask id="4.1">Unit test: button renders in idle state</subtask>
+      <subtask id="4.2">Unit test: button disabled during loading</subtask>
+      <subtask id="4.3">Unit test: button re-enables after completion</subtask>
+      <subtask id="4.4">Integration test: click triggers `refreshPrices()`</subtask>
+      <subtask id="4.5">Test error handling paths</subtask>
+      <subtask id="4.6">Test timestamp formatting logic</subtask>
+      <subtask id="4.7">Manual test on Chrome, Firefox, Safari</subtask>
+      <subtask id="4.8">Manual test on mobile devices (iOS, Android)</subtask>
+    </task>
+
+    <task id="5" acs="All" title="Documentation &amp; Code Review Prep">
+      <subtask id="5.1">Add JSDoc comments to new components/functions</subtask>
+      <subtask id="5.2">Update component documentation if needed</subtask>
+      <subtask id="5.3">Verify code follows project style guide</subtask>
+      <subtask id="5.4">Self-review for accessibility compliance</subtask>
+      <subtask id="5.5">Prepare screenshots/demo for code review</subtask>
+    </task>
+  </tasks>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/epics-and-stories.md</path>
+        <title>Epics and User Stories</title>
+        <section>S3.6: Add Refresh Prices Button</section>
+        <snippet>Add UI control to manually refresh prices and bypass cache. Includes button in Header component, calls usePrices.refreshPrices(), shows loading spinner, displays last updated timestamp.</snippet>
+      </doc>
+
+      <doc>
+        <path>docs/architecture-portfolio-tracker.md</path>
+        <title>Architecture Document</title>
+        <section>Component-Based Architecture</section>
+        <snippet>React with TypeScript for type safety. Component-based UI with modular, reusable components. State management via Zustand stores. Responsive design with mobile-first approach.</snippet>
+      </doc>
+
+      <doc>
+        <path>docs/sprint-artifacts/sprint-02-plan.md</path>
+        <title>Sprint 2 Plan</title>
+        <section>S3.4: Create usePrices Custom Hook</section>
+        <snippet>Hook completed in Sprint 2 with refreshPrices() method fully functional. Manages price fetching, caching, loading states, and error handling per ticker. Provides cache-first fetching strategy.</snippet>
+      </doc>
+
+      <doc>
+        <path>docs/ux-design-portfolio-tracker.md</path>
+        <title>UX Design Document</title>
+        <section>Header Component</section>
+        <snippet>Button should be visible but not dominate header. Loading state must be clearly communicated. Timestamp provides transparency about data freshness. Mobile: button accessible with thumb-friendly placement.</snippet>
+      </doc>
+
+      <doc>
+        <path>docs/test-design-portfolio-tracker.md</path>
+        <title>Test Design Document</title>
+        <section>Price Fetching and Caching Flow</section>
+        <snippet>Integration tests for cache hit/miss scenarios. Tests for usePrices hook with mock API responses. Pattern: renderHook, act, expect loading states and price data.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>portfolio-tracker/src/hooks/usePrices.ts</path>
+        <kind>hook</kind>
+        <symbol>usePrices</symbol>
+        <lines>1-165</lines>
+        <reason>CRITICAL: Core hook that provides refreshPrices() method. Already implemented and tested. Returns: fetchPrices, refreshPrices, isLoading, loadingTickers, errors, lastUpdated, clearErrors.</reason>
+      </file>
+
+      <file>
+        <path>portfolio-tracker/src/hooks/usePrices.ts</path>
+        <kind>hook</kind>
+        <symbol>refreshPrices</symbol>
+        <lines>119-129</lines>
+        <reason>The refresh method to be called by the button. Fetches prices for all previously fetched tickers, bypassing cache.</reason>
+      </file>
+
+      <file>
+        <path>portfolio-tracker/src/components/layout/Header.tsx</path>
+        <kind>component</kind>
+        <symbol>Header</symbol>
+        <lines>1-51</lines>
+        <reason>Component to modify - add refresh button here. Already has theme toggle button pattern to follow. Uses lucide-react icons and shadcn/ui Button component.</reason>
+      </file>
+
+      <file>
+        <path>portfolio-tracker/src/store/priceStore.ts</path>
+        <kind>store</kind>
+        <symbol>usePriceStore</symbol>
+        <lines>1-40</lines>
+        <reason>Zustand store that tracks prices and lastFetch timestamp. Use lastFetch for displaying "updated X minutes ago".</reason>
+      </file>
+
+      <file>
+        <path>portfolio-tracker/src/hooks/__tests__/usePrices.test.ts</path>
+        <kind>test</kind>
+        <symbol>usePrices tests</symbol>
+        <lines>1-250</lines>
+        <reason>Existing test patterns for usePrices hook. Shows how to test refresh functionality, loading states, and error handling. Use as reference for new button tests.</reason>
+      </file>
+
+      <file>
+        <path>portfolio-tracker/src/components/ui/button.tsx</path>
+        <kind>component</kind>
+        <symbol>Button</symbol>
+        <reason>shadcn/ui Button component - use for consistent styling. Supports variant, size, disabled props. Already used in Header for theme toggle.</reason>
+      </file>
+    </code>
+
+    <dependencies ecosystem="npm">
+      <package name="react" version="^19.2.0">Core React library</package>
+      <package name="lucide-react" version="^0.555.0">Icon library for refresh icon (RefreshCw, RotateCw, etc.)</package>
+      <package name="zustand" version="^5.0.9">State management for priceStore</package>
+      <package name="@testing-library/react" version="^16.3.0">Testing utilities for component tests</package>
+      <package name="vitest" version="^4.0.14">Test framework</package>
+      <package name="tailwindcss" version="^3.4.18">Styling framework</package>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface>
+      <name>UsePricesReturn</name>
+      <kind>TypeScript Interface</kind>
+      <path>portfolio-tracker/src/hooks/usePrices.ts</path>
+      <signature>
+        interface UsePricesReturn {
+          fetchPrices: (tickers: string[]) => Promise&lt;void&gt;;
+          refreshPrices: () => Promise&lt;void&gt;;
+          isLoading: boolean;
+          loadingTickers: string[];
+          errors: Record&lt;string, string&gt;;
+          lastUpdated: number | null;
+          clearErrors: () => void;
+        }
+      </signature>
+    </interface>
+
+    <interface>
+      <name>priceStore</name>
+      <kind>Zustand Store</kind>
+      <path>portfolio-tracker/src/store/priceStore.ts</path>
+      <signature>
+        interface PriceState {
+          prices: Record&lt;string, PriceData&gt;;
+          cache: PriceCache;
+          isFetching: boolean;
+          lastFetch: number | null;
+          setPrices: (prices: Record&lt;string, PriceData&gt;) => void;
+          fetchPrice: (ticker: string) => Promise&lt;void&gt;;
+          fetchPrices: (tickers: string[]) => Promise&lt;void&gt;;
+          getCachedPrice: (ticker: string) => PriceData | null;
+          clearCache: () => void;
+        }
+      </signature>
+    </interface>
+
+    <interface>
+      <name>Button Component Props</name>
+      <kind>React Component Props</kind>
+      <path>portfolio-tracker/src/components/ui/button.tsx</path>
+      <signature>
+        interface ButtonProps {
+          variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+          size?: "default" | "sm" | "lg" | "icon";
+          disabled?: boolean;
+          onClick?: () => void;
+          "aria-label"?: string;
+        }
+      </signature>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <development>
+      <constraint category="architecture">Component-based architecture: refresh button is a self-contained UI addition to Header component</constraint>
+      <constraint category="state-management">Use Zustand stores (priceStore) for state, React hooks (usePrices) for logic</constraint>
+      <constraint category="styling">Use shadcn/ui Button component for consistency. Follow existing Header styling patterns</constraint>
+      <constraint category="icons">Use lucide-react icon library (already in dependencies): RefreshCw, RotateCw, or Loader2 for spinner</constraint>
+      <constraint category="accessibility">WCAG AA compliance required: keyboard navigation, screen reader support, sufficient contrast, 44px touch targets</constraint>
+      <constraint category="responsive">Must work across all breakpoints (mobile, tablet, desktop). Mobile-first approach</constraint>
+    </development>
+
+    <testing>
+      <constraint category="unit-tests">Unit tests required for component behavior (button states, loading, disabled). Use vitest + @testing-library/react</constraint>
+      <constraint category="integration-tests">Integration test: button click triggers refreshPrices() method</constraint>
+      <constraint category="coverage">Target >80% code coverage for new components and utilities</constraint>
+      <constraint category="manual-testing">Cross-browser testing (Chrome, Firefox, Safari). Mobile device testing (iOS, Android)</constraint>
+    </testing>
+
+    <technical>
+      <constraint category="performance">Timestamp formatting should use React memoization to avoid excessive re-renders</constraint>
+      <constraint category="error-handling">Handle all error states gracefully. UI must remain functional after errors. User can retry failed operations</constraint>
+      <constraint category="edge-cases">Handle: first load (no prices), rapid clicks (disabled state), network offline, partial failures, very old cache (&gt;24h)</constraint>
+    </technical>
+  </constraints>
+
+  <tests>
+    <standards>
+      Tests use vitest as the testing framework with @testing-library/react for component testing. 
+      Pattern: Use renderHook for custom hooks, act for async operations, expect for assertions.
+      Mock services (priceService, cacheService) using vi.mock.
+      Test files located in __tests__ directories adjacent to source files.
+      Component tests verify: rendering, user interactions, state changes, accessibility.
+      Hook tests verify: return values, side effects, error handling, loading states.
+      Target &gt;80% code coverage with comprehensive edge case coverage.
+    </standards>
+
+    <locations>
+      <location>portfolio-tracker/src/components/layout/__tests__/Header.test.tsx</location>
+      <location>portfolio-tracker/src/utils/__tests__/formatters.test.ts</location>
+      <location>portfolio-tracker/src/hooks/__tests__/usePrices.test.ts (existing - for reference)</location>
+    </locations>
+
+    <ideas>
+      <idea ac="AC1,AC2">Test: Refresh button renders with correct icon and aria-label</idea>
+      <idea ac="AC2">Test: Button is disabled when isLoading is true</idea>
+      <idea ac="AC2">Test: Clicking button calls refreshPrices() method</idea>
+      <idea ac="AC2">Test: Loading spinner shows during refresh</idea>
+      <idea ac="AC3">Test: Timestamp displays "just now" for recent refresh</idea>
+      <idea ac="AC3">Test: Timestamp displays relative time correctly ("2 minutes ago", "1 hour ago")</idea>
+      <idea ac="AC3">Test: Timestamp shows "Never updated" when lastFetch is null</idea>
+      <idea ac="AC4">Test: Error message displays when refreshPrices fails</idea>
+      <idea ac="AC4">Test: Partial failure shows which tickers failed</idea>
+      <idea ac="AC5">Test: Button has minimum 44px height/width for touch targets</idea>
+      <idea ac="AC5">Test: Button is keyboard accessible (focusable, activatable with Enter/Space)</idea>
+      <idea ac="AC5">Test: Loading state is announced to screen readers (aria-busy or aria-live)</idea>
+    </ideas>
+  </tests>
+
+  <context-notes>
+    <note type="implementation">This story is purely UI-focused. The backend logic (refreshPrices method) is already implemented and tested in usePrices hook from Sprint 2 (S3.4).</note>
+    <note type="reuse">Follow the existing theme toggle button pattern in Header.tsx as a reference for button styling, icon usage, and event handling.</note>
+    <note type="new-utility">Need to create utils/formatters.ts with formatRelativeTime() function. This file doesn't exist yet.</note>
+    <note type="testing">Existing usePrices tests show the pattern for testing hook interactions. Use similar approach for new button integration tests.</note>
+    <note type="accessibility">WCAG AA compliance is critical. Ensure keyboard navigation, screen reader support, and touch-friendly sizing (44px minimum).</note>
+    <note type="edge-case">Handle edge cases: first load with no prices (show "Never updated"), rapid clicks (button disabled during loading), network errors (show friendly message).</note>
+    <note type="next-story">S3.7 (Display Price Metadata) will build on this story by enhancing the timestamp display with cache/API source indicator.</note>
+  </context-notes>
+</story-context>
