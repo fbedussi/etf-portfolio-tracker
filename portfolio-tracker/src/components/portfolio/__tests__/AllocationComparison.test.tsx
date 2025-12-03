@@ -4,24 +4,51 @@ import userEvent from '@testing-library/user-event';
 import { AllocationComparison } from '../AllocationComparison';
 import type { Portfolio, PortfolioMetrics, RebalancingStatus } from '@/types';
 import { usePortfolioStore } from '@/store/portfolioStore';
+import { usePortfolio } from '@/hooks/usePortfolio';
 
 // Mock the portfolioStore
 vi.mock('@/store/portfolioStore', () => ({
   usePortfolioStore: vi.fn(),
 }));
 
+// Mock the usePortfolio hook
+vi.mock('@/hooks/usePortfolio', () => ({
+  usePortfolio: vi.fn(),
+}));
+
 const mockUsePortfolioStore = vi.mocked(usePortfolioStore);
+const mockUsePortfolio = vi.mocked(usePortfolio);
 
 describe('AllocationComparison', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Default mock for usePortfolio
+    mockUsePortfolio.mockReturnValue({
+      metrics: null,
+      rebalancingStatus: null,
+      isCalculating: false,
+      recalculate: vi.fn(),
+    });
+    
+    // Default mock for usePortfolioStore (selector function)
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: null };
+      return selector(state);
+    });
   });
 
   it('should render empty state when no portfolio loaded', () => {
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: null,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: null };
+      return selector(state);
+    });
+    
+    mockUsePortfolio.mockReturnValue({
       metrics: null,
       rebalancingStatus: null,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);
@@ -54,10 +81,16 @@ describe('AllocationComparison', () => {
       categoryDrifts: [],
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+    
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);
@@ -99,10 +132,16 @@ describe('AllocationComparison', () => {
       categoryDrifts: [],
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);
@@ -132,10 +171,16 @@ describe('AllocationComparison', () => {
       },
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus: null,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);
@@ -173,10 +218,16 @@ describe('AllocationComparison', () => {
       },
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus: null,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);
@@ -205,10 +256,16 @@ describe('AllocationComparison', () => {
       },
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus: null,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);
@@ -247,10 +304,16 @@ describe('AllocationComparison', () => {
       },
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus: null,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     const { container } = render(<AllocationComparison />);
@@ -284,10 +347,16 @@ describe('AllocationComparison', () => {
       categoryDrifts: [],
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);
@@ -314,10 +383,16 @@ describe('AllocationComparison', () => {
       categoryDrifts: [],
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);
@@ -340,10 +415,16 @@ describe('AllocationComparison', () => {
       },
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus: null,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);
@@ -374,10 +455,16 @@ describe('AllocationComparison', () => {
       categoryDrifts: [],
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);
@@ -397,10 +484,16 @@ describe('AllocationComparison', () => {
       currentAllocation: { stocks: 75, bonds: 25 },
     };
 
-    mockUsePortfolioStore.mockReturnValue({
-      portfolio: portfolio as Portfolio,
+    mockUsePortfolioStore.mockImplementation((selector: any) => {
+      const state = { portfolio: portfolio as Portfolio };
+      return selector(state);
+    });
+
+    mockUsePortfolio.mockReturnValue({
       metrics: metrics as PortfolioMetrics,
       rebalancingStatus: null,
+      isCalculating: false,
+      recalculate: vi.fn(),
     });
 
     render(<AllocationComparison />);

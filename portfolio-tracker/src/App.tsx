@@ -2,9 +2,13 @@ import { AppShell } from './components/layout';
 import { FileUpload } from '@/components/ui/file-upload';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { usePortfolioStore } from '@/store/portfolioStore';
+import { useTheme } from '@/hooks/useTheme';
 
 function App() {
   const portfolio = usePortfolioStore((state) => state.portfolio);
+  
+  // Initialize theme (applies to document root)
+  useTheme();
 
   return (
     <AppShell>

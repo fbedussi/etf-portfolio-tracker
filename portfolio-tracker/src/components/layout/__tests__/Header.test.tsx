@@ -6,8 +6,17 @@ import { Header } from '../Header';
 // Mock the hooks and stores
 vi.mock('@/store', () => ({
   useUIStore: vi.fn(() => ({
+    driftThreshold: 5,
+    setDriftThreshold: vi.fn(),
+  })),
+}));
+
+vi.mock('@/hooks/useTheme', () => ({
+  useTheme: vi.fn(() => ({
     theme: 'light',
+    resolvedTheme: 'light',
     setTheme: vi.fn(),
+    systemPrefersDark: false,
   })),
 }));
 
@@ -55,7 +64,7 @@ describe('Header', () => {
 
   it('should render theme toggle button', () => {
     render(<Header />);
-    const themeButton = screen.getByRole('button', { name: /toggle theme/i });
+    const themeButton = screen.getByRole('button', { name: /theme/i });
     expect(themeButton).toBeInTheDocument();
   });
 
@@ -268,38 +277,110 @@ describe('Header', () => {
   });
 
   describe('Theme Toggle', () => {
-    it('should call setTheme when theme button is clicked', async () => {
+    it('should cycle from light to dark theme when clicked', async () => {
       const mockSetTheme = vi.fn();
-      const { useUIStore } = await import('@/store');
-      vi.mocked(useUIStore).mockReturnValue({
+      const { useTheme } = await import('@/hooks/useTheme');
+      vi.mocked(useTheme).mockReturnValue({
         theme: 'light',
+        resolvedTheme: 'light',
         setTheme: mockSetTheme,
-      } as any);
+        systemPrefersDark: false,
+      });
 
       const user = userEvent.setup();
       render(<Header />);
 
-      const themeButton = screen.getByRole('button', { name: /toggle theme/i });
+      const themeButton = screen.getByRole('button', { name: /switch to dark theme/i });
       await user.click(themeButton);
 
       expect(mockSetTheme).toHaveBeenCalledWith('dark');
     });
 
-    it('should toggle from dark to light theme', async () => {
+    it('should cycle from dark to auto theme when clicked', async () => {
       const mockSetTheme = vi.fn();
-      const { useUIStore } = await import('@/store');
-      vi.mocked(useUIStore).mockReturnValue({
+      const { useTheme } = await import('@/hooks/useTheme');
+      vi.mocked(useTheme).mockReturnValue({
         theme: 'dark',
+        resolvedTheme: 'dark',
         setTheme: mockSetTheme,
-      } as any);
+        systemPrefersDark: false,
+      });
 
       const user = userEvent.setup();
       render(<Header />);
 
-      const themeButton = screen.getByRole('button', { name: /toggle theme/i });
+      const themeButton = screen.getByRole('button', { name: /switch to auto theme/i });
+      await user.click(themeButton);
+
+      expect(mockSetTheme).toHaveBeenCalledWith('auto');
+    });
+
+    it('should cycle from auto to light theme when clicked', async () => {
+      const mockSetTheme = vi.fn();
+      const { useTheme } = await import('@/hooks/useTheme');
+      vi.mocked(useTheme).mockReturnValue({
+        theme: 'auto',
+        resolvedTheme: 'light',
+        setTheme: mockSetTheme,
+        systemPrefersDark: false,
+      });
+
+      const user = userEvent.setup();
+      render(<Header />);
+
+      const themeButton = screen.getByRole('button', { name: /switch to light theme/i });
       await user.click(themeButton);
 
       expect(mockSetTheme).toHaveBeenCalledWith('light');
+    });
+
+    it('should display sun icon when theme is light', async () => {
+      const { useTheme } = await import('@/hooks/useTheme');
+      vi.mocked(useTheme).mockReturnValue({
+        theme: 'light',
+        resolvedTheme: 'light',
+        setTheme: vi.fn(),
+        systemPrefersDark: false,
+      });
+
+      const { container } = render(<Header />);
+      
+      // Check that the Sun icon is rendered (lucide-react renders as <svg>)
+      const themeButton = screen.getByRole('button', { name: /theme/i });
+      expect(themeButton).toBeInTheDocument();
+      expect(themeButton.querySelector('svg')).toBeInTheDocument();
+    });
+
+    it('should display moon icon when theme is dark', async () => {
+      const { useTheme } = await import('@/hooks/useTheme');
+      vi.mocked(useTheme).mockReturnValue({
+        theme: 'dark',
+        resolvedTheme: 'dark',
+        setTheme: vi.fn(),
+        systemPrefersDark: false,
+      });
+
+      const { container } = render(<Header />);
+      
+      const themeButton = screen.getByRole('button', { name: /theme/i });
+      expect(themeButton).toBeInTheDocument();
+      expect(themeButton.querySelector('svg')).toBeInTheDocument();
+    });
+
+    it('should display monitor icon when theme is auto', async () => {
+      const { useTheme } = await import('@/hooks/useTheme');
+      vi.mocked(useTheme).mockReturnValue({
+        theme: 'auto',
+        resolvedTheme: 'light',
+        setTheme: vi.fn(),
+        systemPrefersDark: false,
+      });
+
+      const { container } = render(<Header />);
+      
+      const themeButton = screen.getByRole('button', { name: /theme/i });
+      expect(themeButton).toBeInTheDocument();
+      expect(themeButton.querySelector('svg')).toBeInTheDocument();
     });
   });
 

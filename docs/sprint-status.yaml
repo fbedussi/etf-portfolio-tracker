@@ -6,7 +6,7 @@
 project: "portfolio"
 total_story_points: 133
 total_sprints_planned: 7
-current_sprint: 5
+current_sprint: 6
 
 sprint_summary:
   completed_sprints: 5
@@ -641,9 +641,9 @@ sprints:
 
   - sprint_number: 6
     sprint_name: "Responsive & Theme Support"
-    status: "planned"
-    start_date: "2026-02-10"
-    end_date: "2026-02-21"
+    status: "in-progress"
+    start_date: "2025-12-03"
+    end_date: "2025-12-17"
     duration_weeks: 2
     
     goals:
@@ -652,15 +652,69 @@ sprints:
       - "Mobile and tablet optimization"
     
     metrics:
-      committed_points_estimate: "23-25"
+      committed_points: 13
+      completed_points: 7
+      completion_rate: 54%
+      stories_committed: 5
+      stories_completed: 3
+      velocity: 7  # Partial sprint
+      tests_written: 20  # 16 useTheme + 4 new Header theme tests
+      note: "Theme system complete (7/13 pts); Responsive layouts remaining (6/13 pts)"
     
     epics_included:
       - epic_id: "E7"
         epic_name: "Responsive & Theme Support"
-        note: "All responsive and theme stories"
-      - epic_id: "E8"
-        epic_name: "Error Handling & Offline Mode"
-        note: "Partial - start error handling"
+        points_committed: 13
+        points_completed: 7
+    
+    stories:
+      - id: "S7.1"
+        title: "Implement Theme Toggle"
+        epic: "E7"
+        points: 3
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        note: "Complete - useTheme hook with auto/light/dark, system detection, 16 tests"
+        
+      - id: "S7.2"
+        title: "Design Dark Theme Palette"
+        epic: "E7"
+        points: 2
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 5
+        acceptance_criteria_total: 5
+        note: "Complete - Dark theme CSS variables, smooth transitions, WCAG AA compliant"
+        
+      - id: "S7.3"
+        title: "Add Theme Toggle UI Control"
+        epic: "E7"
+        points: 2
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        note: "Complete - 3-mode toggle in Header with icons, 10 theme tests total"
+        
+      - id: "S7.4"
+        title: "Implement Mobile Responsive Layout"
+        epic: "E7"
+        points: 3
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 6
+        
+      - id: "S7.5"
+        title: "Implement Tablet Responsive Layout"
+        epic: "E7"
+        points: 3
+        status: "not-started"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 0
+        acceptance_criteria_total: 5
 
   - sprint_number: 7
     sprint_name: "Polish & Production Readiness"

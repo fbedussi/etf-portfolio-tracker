@@ -27,7 +27,7 @@ interface UIState {
 export const useUIStore = create<UIState>()(
   persist(
     (set) => ({
-      theme: 'light',
+      theme: 'auto' as Theme, // Default to auto (follows system preference)
       setTheme: (theme: Theme) => set({ theme }),
 
       currentView: 'dashboard',

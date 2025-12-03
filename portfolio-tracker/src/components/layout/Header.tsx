@@ -1,15 +1,17 @@
-import { Moon, Sun, MoreVertical, RefreshCw, FolderOpen, Settings2 } from 'lucide-react';
+import { Moon, Sun, MonitorCog, MoreVertical, RefreshCw, FolderOpen, Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useUIStore } from '@/store';
 import { usePrices } from '@/hooks/usePrices';
 import { usePriceStore } from '@/store/priceStore';
 import { usePortfolioStore } from '@/store/portfolioStore';
+import { useTheme } from '@/hooks/useTheme';
 import { formatRelativeTime } from '@/utils/formatters';
 import { useState } from 'react';
 
 export function Header() {
-  const { theme, setTheme, driftThreshold, setDriftThreshold } = useUIStore();
+  const { theme, setTheme } = useTheme();
+  const { driftThreshold, setDriftThreshold } = useUIStore();
   const { refreshPrices, isLoading, lastUpdated } = usePrices();
   const prices = usePriceStore((state) => state.prices);
   const clearAllPrices = usePriceStore((state) => state.clearAllPrices);
@@ -17,8 +19,41 @@ export function Header() {
   const clearPortfolio = usePortfolioStore((state) => state.clearPortfolio);
   const [showThresholdSelector, setShowThresholdSelector] = useState(false);
 
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+  const cycleTheme = () => {
+    // Cycle through: light -> dark -> auto -> light
+    if (theme === 'light') {
+      setTheme('dark');
+    } else if (theme === 'dark') {
+      setTheme('auto');
+    } else {
+      setTheme('light');
+    }
+  };
+
+  const getThemeIcon = () => {
+    switch (theme) {
+      case 'light':
+        return <Sun className="h-5 w-5" />;
+      case 'dark':
+        return <Moon className="h-5 w-5" />;
+      case 'auto':
+        return <MonitorCog className="h-5 w-5" />;
+      default:
+        return <Sun className="h-5 w-5" />;
+    }
+  };
+
+  const getThemeLabel = () => {
+    switch (theme) {
+      case 'light':
+        return 'Switch to dark theme';
+      case 'dark':
+        return 'Switch to auto theme';
+      case 'auto':
+        return 'Switch to light theme';
+      default:
+        return 'Toggle theme';
+    }
   };
 
   const handleRefreshPrices = async () => {
@@ -157,14 +192,11 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
+              onClick={cycleTheme}
+              aria-label={getThemeLabel()}
+              title={`Theme: ${theme}`}
             >
-              {theme === 'light' ? (
-                <Moon className="h-5 w-5" />
-              ) : (
-                <Sun className="h-5 w-5" />
-              )}
+              {getThemeIcon()}
             </Button>
 
             <Button variant="ghost" size="icon" aria-label="More options">

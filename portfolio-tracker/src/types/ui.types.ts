@@ -1,6 +1,6 @@
 // UI State and View Models
 
-export type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'auto';
 
 export type ViewMode = 'dashboard' | 'holdings' | 'rebalancing' | 'settings';
 

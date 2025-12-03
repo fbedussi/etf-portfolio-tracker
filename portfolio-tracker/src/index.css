@@ -64,5 +64,23 @@
   }
   body {
     @apply bg-background text-foreground;
+    transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
+  }
+  
+  /* Smooth theme transitions */
+  *,
+  *::before,
+  *::after {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: ease-in-out;
+    transition-duration: 200ms;
+  }
+  
+  /* Disable transitions for elements that shouldn't animate */
+  button,
+  input,
+  select,
+  textarea {
+    transition-property: background-color, border-color, color;
   }
 }
