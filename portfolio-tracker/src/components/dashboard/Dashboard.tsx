@@ -27,7 +27,7 @@ export function Dashboard() {
   }, [portfolio, fetchPrices]);
 
   return (
-    <div className="container mx-auto space-y-6 py-6">
+    <div className="container mx-auto space-y-6 py-6" data-testid="dashboard">
       {/* Hero Section - Portfolio Value */}
       <PortfolioValueCard />
 
