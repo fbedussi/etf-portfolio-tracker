@@ -11,6 +11,10 @@ interface UIState {
   currentView: ViewMode;
   setCurrentView: (view: ViewMode) => void;
 
+  // Rebalancing Settings
+  driftThreshold: number;
+  setDriftThreshold: (threshold: number) => void;
+
   // UI States
   isRebalancingExpanded: boolean;
   toggleRebalancingExpanded: () => void;
@@ -29,6 +33,13 @@ export const useUIStore = create<UIState>()(
       currentView: 'dashboard',
       setCurrentView: (view: ViewMode) => set({ currentView: view }),
 
+      driftThreshold: 5, // Default 5%
+      setDriftThreshold: (threshold: number) => {
+        // Validate: threshold must be between 1 and 20
+        const validThreshold = Math.min(Math.max(threshold, 1), 20);
+        set({ driftThreshold: validThreshold });
+      },
+
       isRebalancingExpanded: false,
       toggleRebalancingExpanded: () =>
         set((state) => ({
@@ -45,6 +56,7 @@ export const useUIStore = create<UIState>()(
       partialize: (state) => ({
         theme: state.theme,
         currentView: state.currentView,
+        driftThreshold: state.driftThreshold,
       }),
     }
   )

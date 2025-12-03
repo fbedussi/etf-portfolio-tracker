@@ -26,6 +26,7 @@ interface PortfolioState {
   refreshPrices: () => Promise<void>;
   clearPortfolio: () => void;
   setError: (error: string | null) => void;
+  setRebalancingStatus: (status: RebalancingStatus | null) => void;
 }
 
 export const usePortfolioStore = create<PortfolioState>((set, get) => ({
@@ -97,5 +98,9 @@ export const usePortfolioStore = create<PortfolioState>((set, get) => ({
 
   setError: (error: string | null) => {
     set({ error });
+  },
+
+  setRebalancingStatus: (status: RebalancingStatus | null) => {
+    set({ rebalancingStatus: status });
   },
 }));

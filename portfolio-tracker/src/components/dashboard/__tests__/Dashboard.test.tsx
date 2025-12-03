@@ -62,6 +62,7 @@ describe('Dashboard', () => {
     expect(screen.getByText('Total Portfolio Value')).toBeInTheDocument();
     expect(screen.getByText('Asset Allocation')).toBeInTheDocument();
     expect(screen.getByText('Holdings')).toBeInTheDocument();
+    expect(screen.getByText('Rebalancing Status')).toBeInTheDocument();
   });
 
   it('should display portfolio data correctly', () => {

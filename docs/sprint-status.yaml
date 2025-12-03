@@ -6,14 +6,14 @@
 project: "portfolio"
 total_story_points: 133
 total_sprints_planned: 7
-current_sprint: 4
+current_sprint: 5
 
 sprint_summary:
-  completed_sprints: 3
-  completed_points: 78
-  remaining_points: 55
-  overall_progress: 58.6%
-  average_velocity: 19.5  # Based on Sprint 1 (15), Sprint 2 (23), Sprint 3 (19), Sprint 4 (20)
+  completed_sprints: 5
+  completed_points: 91
+  remaining_points: 42
+  overall_progress: 68.4%
+  average_velocity: 18.2  # Based on Sprint 1 (15), Sprint 2 (23), Sprint 3 (19), Sprint 4 (20), Sprint 5 (13)
 
 sprints:
   - sprint_number: 1
@@ -560,27 +560,84 @@ sprints:
       - "Comprehensive test mocking strategies"
 
   - sprint_number: 5
-    sprint_name: "Dashboard UI & Rebalancing"
-    status: "planned"
-    start_date: "2026-01-27"
-    end_date: "2026-02-07"
+    sprint_name: "Rebalancing Analysis"
+    status: "completed"
+    start_date: "2025-12-03"
+    end_date: "2025-12-16"
     duration_weeks: 2
     
     goals:
-      - "Complete Dashboard UI (E5)"
-      - "Implement Rebalancing Analysis (E6)"
-      - "Full functional dashboard"
+      - "Implement complete rebalancing analysis engine (E6)"
+      - "Build rebalancing UI components"
+      - "Enable portfolio drift monitoring"
+      - "Provide actionable rebalancing recommendations"
     
     metrics:
-      committed_points_estimate: "23-25"
+      committed_points: 13
+      completed_points: 13
+      completion_rate: 100%
+      stories_committed: 5
+      stories_completed: 5
+      velocity: 13
+      note: "All 5 stories completed (13/13 points), 60 new tests passing (329 total)"
     
     epics_included:
-      - epic_id: "E5"
-        epic_name: "Dashboard UI - Core Views"
-        note: "Complete remaining stories"
       - epic_id: "E6"
         epic_name: "Rebalancing Analysis"
-        note: "All rebalancing features"
+        points_committed: 13
+        points_completed: 0
+        note: "Complete E6 - all rebalancing features"
+    
+    stories:
+      - id: "S6.1"
+        title: "Implement Drift Calculation"
+        epic: "E6"
+        points: 3
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        note: "Complete - calculateDrift with 8 comprehensive tests, sorted by absDrift"
+        
+      - id: "S6.2"
+        title: "Implement Rebalancing Status Logic"
+        epic: "E6"
+        points: 2
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 5
+        acceptance_criteria_total: 5
+        note: "Complete - determineRebalancingStatus + helpers, 23 tests in rebalancingService"
+        
+      - id: "S6.3"
+        title: "Create Rebalancing Status Card Component"
+        epic: "E6"
+        points: 3
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 7
+        acceptance_criteria_total: 7
+        note: "Complete - RebalancingStatusCard with 9 tests, integrated into Dashboard"
+        
+      - id: "S6.4"
+        title: "Create Target vs Current Comparison View"
+        epic: "E6"
+        points: 3
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 7
+        acceptance_criteria_total: 7
+        note: "Complete - AllocationComparison with sortable table, 12 tests, integrated into Dashboard"
+        
+      - id: "S6.5"
+        title: "Add Drift Threshold Configuration"
+        epic: "E6"
+        points: 2
+        status: "completed"
+        assignee: "Dev Team"
+        acceptance_criteria_met: 6
+        acceptance_criteria_total: 6
+        note: "Complete - User-configurable threshold in Header, localStorage persistence, 8 tests"
 
   - sprint_number: 6
     sprint_name: "Responsive & Theme Support"

@@ -1,4 +1,4 @@
-import { Moon, Sun, MoreVertical, RefreshCw, FolderOpen } from 'lucide-react';
+import { Moon, Sun, MoreVertical, RefreshCw, FolderOpen, Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useUIStore } from '@/store';
@@ -6,14 +6,16 @@ import { usePrices } from '@/hooks/usePrices';
 import { usePriceStore } from '@/store/priceStore';
 import { usePortfolioStore } from '@/store/portfolioStore';
 import { formatRelativeTime } from '@/utils/formatters';
+import { useState } from 'react';
 
 export function Header() {
-  const { theme, setTheme } = useUIStore();
+  const { theme, setTheme, driftThreshold, setDriftThreshold } = useUIStore();
   const { refreshPrices, isLoading, lastUpdated } = usePrices();
   const prices = usePriceStore((state) => state.prices);
   const clearAllPrices = usePriceStore((state) => state.clearAllPrices);
   const portfolio = usePortfolioStore((state) => state.portfolio);
   const clearPortfolio = usePortfolioStore((state) => state.clearPortfolio);
+  const [showThresholdSelector, setShowThresholdSelector] = useState(false);
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
@@ -27,6 +29,14 @@ export function Header() {
     clearPortfolio();
     clearAllPrices();
   };
+
+  const handleThresholdChange = (value: number) => {
+    setDriftThreshold(value);
+    setShowThresholdSelector(false);
+  };
+
+  // Predefined threshold options
+  const thresholdOptions = [2, 3, 5, 7, 10];
 
   // Determine price source - if all prices are from cache, show "Cached", otherwise "Live"
   const getPriceSource = () => {
@@ -58,6 +68,46 @@ export function Header() {
           </div>
 
           <nav className="flex items-center gap-2">
+            {/* Drift Threshold Selector - only show when portfolio has target allocation */}
+            {portfolio?.targetAllocation && (
+              <div className="relative hidden md:block">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowThresholdSelector(!showThresholdSelector)}
+                  className="gap-2"
+                  aria-label="Configure drift threshold"
+                >
+                  <Settings2 className="h-4 w-4" />
+                  Threshold: {driftThreshold}%
+                </Button>
+                
+                {showThresholdSelector && (
+                  <div className="absolute right-0 mt-2 w-48 rounded-md border bg-popover p-2 shadow-md z-50">
+                    <div className="text-sm font-medium mb-2 px-2">Drift Threshold</div>
+                    <div className="space-y-1">
+                      {thresholdOptions.map((option) => (
+                        <button
+                          key={option}
+                          onClick={() => handleThresholdChange(option)}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground ${
+                            driftThreshold === option ? 'bg-accent font-medium' : ''
+                          }`}
+                          aria-label={`Set threshold to ${option}%`}
+                        >
+                          {option}%
+                          {option === driftThreshold && ' ✓'}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-2 px-2 text-xs text-muted-foreground border-t pt-2">
+                      Lower = more sensitive to drift
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Load Different Portfolio button - only show when portfolio is loaded */}
             {portfolio && (
               <Button

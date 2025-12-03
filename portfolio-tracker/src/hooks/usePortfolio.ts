@@ -8,6 +8,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { usePortfolioStore } from '@/store/portfolioStore';
 import { usePriceStore } from '@/store/priceStore';
+import { useUIStore } from '@/store/uiStore';
 import {
   calculateHoldings,
   calculatePortfolioValue,
@@ -15,11 +16,14 @@ import {
   calculateETFProfitLoss,
   calculateAllocation,
 } from '@/services/portfolioService';
-import type { PortfolioMetrics, HoldingDetail } from '@/types/portfolio.types';
+import { calculateRebalancingStatus } from '@/services/rebalancingService';
+import type { PortfolioMetrics, HoldingDetail, RebalancingStatus } from '@/types/portfolio.types';
 
 export interface UsePortfolioReturn {
   /** Calculated portfolio metrics, null if no portfolio loaded */
   metrics: PortfolioMetrics | null;
+  /** Rebalancing status and drift analysis */
+  rebalancingStatus: RebalancingStatus | null;
   /** True while calculations are being performed */
   isCalculating: boolean;
   /** Manually trigger recalculation */
@@ -54,7 +58,9 @@ export interface UsePortfolioReturn {
  */
 export function usePortfolio(): UsePortfolioReturn {
   const portfolio = usePortfolioStore((state) => state.portfolio);
+  const setRebalancingStatus = usePortfolioStore((state) => state.setRebalancingStatus);
   const prices = usePriceStore((state) => state.prices);
+  const driftThreshold = useUIStore((state) => state.driftThreshold);
   const [isCalculating, setIsCalculating] = useState(false);
 
   // Memoize calculations to avoid redundant work
@@ -128,6 +134,26 @@ export function usePortfolio(): UsePortfolioReturn {
     }
   }, [portfolio, prices]);
 
+  // Calculate rebalancing status
+  const rebalancingStatus = useMemo<RebalancingStatus | null>(() => {
+    if (!portfolio || !metrics || !portfolio.targetAllocation) {
+      return null;
+    }
+
+    return calculateRebalancingStatus(
+      metrics.currentAllocation,
+      portfolio.targetAllocation,
+      driftThreshold
+    );
+  }, [portfolio, metrics, driftThreshold]);
+
+  // Update store with rebalancing status
+  useEffect(() => {
+    if (rebalancingStatus) {
+      setRebalancingStatus(rebalancingStatus);
+    }
+  }, [rebalancingStatus, setRebalancingStatus]);
+
   // Recalculate function for manual triggers
   const recalculate = () => {
     // Force re-render by updating a dependency
@@ -139,6 +165,7 @@ export function usePortfolio(): UsePortfolioReturn {
 
   return {
     metrics,
+    rebalancingStatus,
     isCalculating,
     recalculate,
   };
