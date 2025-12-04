@@ -13,10 +13,28 @@ vi.mock('@/services/priceService', () => ({
   PriceServiceError: class PriceServiceError extends Error {
     code: string;
     ticker?: string;
-    constructor(message: string, code: string, ticker?: string) {
+    userMessage: string;
+    
+    constructor(message: string, code: string, ticker?: string, userMessage?: string) {
       super(message);
       this.code = code;
       this.ticker = ticker;
+      this.userMessage = userMessage || message;
+    }
+    
+    getUserFriendlyMessage(): string {
+      switch (this.code) {
+        case 'NETWORK_ERROR':
+          return `Cannot fetch prices. Please check your internet connection and try again.`;
+        case 'TIMEOUT':
+          return `Request timed out for ${this.ticker}. The server took too long to respond.`;
+        case 'RATE_LIMIT_EXCEEDED':
+          return `API limit reached. Prices will refresh in a few minutes. Using cached data where available.`;
+        case 'INVALID_TICKER':
+          return `Price unavailable for ${this.ticker}. Please check the ticker symbol is correct.`;
+        default:
+          return this.userMessage;
+      }
     }
   },
 }));
@@ -99,7 +117,10 @@ describe('usePrices', () => {
         await result.current.fetchPrices(['INVALID']);
       });
 
-      expect(result.current.errors['INVALID']).toBe('Invalid ticker');
+      expect(result.current.errors['INVALID']).toBeDefined();
+      expect(result.current.errors['INVALID'].ticker).toBe('INVALID');
+      expect(result.current.errors['INVALID'].code).toBe('INVALID_TICKER');
+      expect(result.current.errors['INVALID'].message).toContain('Price unavailable');
       expect(result.current.isLoading).toBe(false);
     });
 

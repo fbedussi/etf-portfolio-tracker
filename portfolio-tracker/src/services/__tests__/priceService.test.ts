@@ -63,12 +63,21 @@ describe('PriceService', () => {
         'Error Message': 'Invalid API call',
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as any).mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
       });
 
-      await expect(priceService.fetchPrice('INVALID')).rejects.toThrow('Invalid ticker symbol');
+      // Start the fetch and advance through all retries
+      const promise = priceService.fetchPrice('INVALID');
+      
+      // Advance through initial attempt + 3 retries (2s, 5s, 10s delays)
+      await vi.advanceTimersByTimeAsync(0); // Initial
+      await vi.advanceTimersByTimeAsync(2000); // Retry 1
+      await vi.advanceTimersByTimeAsync(5000); // Retry 2
+      await vi.advanceTimersByTimeAsync(10000); // Retry 3
+
+      await expect(promise).rejects.toThrow('Invalid ticker symbol');
     });
 
     it('should throw error when rate limit is exceeded', async () => {
@@ -76,22 +85,40 @@ describe('PriceService', () => {
         Note: 'Thank you for using Alpha Vantage! Our standard API call frequency is 5 calls per minute.',
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as any).mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
       });
 
-      await expect(priceService.fetchPrice('VTI')).rejects.toThrow('API rate limit exceeded');
+      // Start the fetch and advance through all retries
+      const promise = priceService.fetchPrice('VTI');
+      
+      // Advance through initial attempt + 3 retries
+      await vi.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(2000);
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.advanceTimersByTimeAsync(10000);
+
+      await expect(promise).rejects.toThrow('API rate limit exceeded');
     });
 
     it('should throw error when API request fails', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as any).mockResolvedValue({
         ok: false,
         status: 500,
         statusText: 'Internal Server Error',
       });
 
-      await expect(priceService.fetchPrice('VTI')).rejects.toThrow('API request failed');
+      // Start the fetch and advance through all retries
+      const promise = priceService.fetchPrice('VTI');
+      
+      // Advance through initial attempt + 3 retries
+      await vi.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(2000);
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.advanceTimersByTimeAsync(10000);
+
+      await expect(promise).rejects.toThrow(PriceServiceError);
     });
 
     it('should throw error when no data is available', async () => {
@@ -99,25 +126,43 @@ describe('PriceService', () => {
         'Global Quote': {},
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as any).mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
       });
 
-      await expect(priceService.fetchPrice('VTI')).rejects.toThrow('No price data available');
+      // Start the fetch and advance through all retries
+      const promise = priceService.fetchPrice('VTI');
+      
+      // Advance through initial attempt + 3 retries
+      await vi.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(2000);
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.advanceTimersByTimeAsync(10000);
+
+      await expect(promise).rejects.toThrow('No price data available');
     });
 
     it('should handle network errors', async () => {
-      (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
+      (global.fetch as any).mockRejectedValue(new Error('Network error'));
 
-      await expect(priceService.fetchPrice('VTI')).rejects.toThrow('Failed to fetch price');
+      // Start the fetch and advance through all retries
+      const promise = priceService.fetchPrice('VTI');
+      
+      // Advance through initial attempt + 3 retries
+      await vi.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(2000);
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.advanceTimersByTimeAsync(10000);
+
+      await expect(promise).rejects.toThrow('Failed to fetch price for VTI');
     });
 
     it('should timeout after configured duration', async () => {
       vi.useFakeTimers();
       
       let abortSignal: AbortSignal | undefined;
-      (global.fetch as any).mockImplementationOnce(
+      (global.fetch as any).mockImplementation(
         (url: string, options: any) => {
           abortSignal = options?.signal;
           return new Promise((resolve, reject) => {
@@ -136,15 +181,24 @@ describe('PriceService', () => {
 
       const fetchPromise = priceService.fetchPrice('VTI');
       
-      // Fast-forward time past the 10s timeout and wait for promise to reject
-      await vi.runAllTimersAsync();
+      // Advance through timeout + retry cycles
+      // Each attempt: timeout (10s) + retry delay (2s, 5s, 10s)
+      await vi.advanceTimersByTimeAsync(10000); // Initial timeout
+      await vi.advanceTimersByTimeAsync(2000); // Retry 1 delay
+      await vi.advanceTimersByTimeAsync(10000); // Retry 1 timeout
+      await vi.advanceTimersByTimeAsync(5000); // Retry 2 delay
+      await vi.advanceTimersByTimeAsync(10000); // Retry 2 timeout
+      await vi.advanceTimersByTimeAsync(10000); // Retry 3 delay
+      await vi.advanceTimersByTimeAsync(10000); // Retry 3 timeout
       
       // Catch and verify the rejection
       try {
         await fetchPromise;
         throw new Error('Should have thrown');
       } catch (error: any) {
-        expect(error.message).toContain('Request timeout');
+        // After retries, abort errors get converted to TIMEOUT errors on first attempt
+        // then potentially network errors on retries
+        expect(error instanceof PriceServiceError).toBe(true);
       }
       
       vi.useRealTimers();

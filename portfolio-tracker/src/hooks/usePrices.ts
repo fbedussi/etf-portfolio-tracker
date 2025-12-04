@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { priceService, PriceServiceError } from '@/services/priceService';
 import { cacheService } from '@/services/cacheService';
-import { usePriceStore } from '@/store/priceStore';
+import { usePriceStore, type PriceError } from '@/store/priceStore';
 import { priceRequestQueue } from '@/services/requestQueue';
 import type { PriceData } from '@/types';
 
@@ -14,23 +14,27 @@ export interface UsePricesReturn {
   refreshPrices: () => Promise<void>;
   isLoading: boolean;
   loadingTickers: string[];
-  errors: Record<string, string>;
+  errors: Record<string, PriceError>;
   lastUpdated: number | null;
   clearErrors: () => void;
+  clearError: (ticker: string) => void;
 }
 
 export function usePrices(tickers?: string[]): UsePricesReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingTickers, setLoadingTickers] = useState<string[]>([]);
-  const [errors, setErrors] = useState<Record<string, string>>({});
   
   // Get price store
   const prices = usePriceStore((state) => state.prices);
   const setPrices = usePriceStore((state) => state.setPrices);
   const lastFetch = usePriceStore((state) => state.lastFetch);
+  const errors = usePriceStore((state) => state.errors);
+  const setError = usePriceStore((state) => state.setError);
+  const clearError = usePriceStore((state) => state.clearError);
+  const clearAllErrors = usePriceStore((state) => state.clearAllErrors);
 
   /**
-   * Fetch prices for given tickers with cache check
+   * Fetch prices for given tickers with cache check and error fallback
    */
   const fetchPrices = useCallback(async (tickersToFetch: string[]) => {
     if (tickersToFetch.length === 0) {
@@ -39,10 +43,9 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
 
     setIsLoading(true);
     setLoadingTickers(tickersToFetch);
-    setErrors({});
+    clearAllErrors();
 
     const newPrices: Record<string, PriceData> = {};
-    const newErrors: Record<string, string> = {};
     const tickersToFetchFromAPI: string[] = [];
 
     // First, check cache for all tickers
@@ -50,6 +53,7 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
       const cached = cacheService.getCachedPrice(ticker);
       if (cached) {
         newPrices[ticker] = cached;
+        console.log(`Using cached price for ${ticker}`);
       } else {
         tickersToFetchFromAPI.push(ticker);
       }
@@ -57,8 +61,6 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
 
     // Fetch prices from API for tickers not in cache
     if (tickersToFetchFromAPI.length > 0) {
-      console.log(`Fetching ${tickersToFetchFromAPI.length} prices from API...`);
-      
       console.log(`Fetching ${tickersToFetchFromAPI.length} prices from API...`);
 
       const unsubscribe = priceRequestQueue.onProgress((progress) => {
@@ -75,26 +77,60 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
             priceRequestQueue
               .enqueue(() => priceService.fetchPrice(ticker), ticker)
               .then(
-                (priceData) => ({ ticker, priceData }),
-                (error) => ({ ticker, error })
+                (priceData) => ({ ticker, priceData, success: true }),
+                (error) => ({ ticker, error, success: false })
               )
           )
         );
 
         for (const result of fetchResults) {
-          if ('priceData' in result) {
+          if (result.success && 'priceData' in result) {
+            // Success: cache and store price
             cacheService.cachePriceData(result.priceData);
             newPrices[result.ticker] = result.priceData;
           } else {
+            // Error: try fallback to cache, then create error
             const rawError = result.error;
-            const errorMessage = rawError instanceof PriceServiceError
-              ? rawError.message
-              : rawError instanceof Error
-              ? rawError.message
-              : 'Unknown error occurred';
+            const priceError = rawError instanceof PriceServiceError
+              ? rawError
+              : null;
 
-            console.error(`Error fetching ${result.ticker}:`, errorMessage);
-            newErrors[result.ticker] = errorMessage;
+            // Attempt fallback to cached price (even if expired)
+            const cachedData = cacheService.getCachedPrice(result.ticker);
+            if (cachedData) {
+              // Use cached data with warning
+              newPrices[result.ticker] = {
+                ...cachedData,
+                source: 'cache' as const,
+              };
+              
+              // Create warning-level error
+              const cacheAge = Math.floor((Date.now() - cachedData.timestamp) / 1000 / 60);
+              setError(result.ticker, {
+                ticker: result.ticker,
+                message: `Cannot fetch current price. Using cached data from ${cacheAge} minutes ago.`,
+                code: priceError?.code || 'FALLBACK_CACHE',
+                timestamp: Date.now(),
+              });
+              
+              console.warn(`Using cached fallback for ${result.ticker} (${cacheAge}m old)`);
+            } else {
+              // No cache available - full error
+              const userMessage = priceError
+                ? priceError.getUserFriendlyMessage()
+                : rawError instanceof Error
+                ? rawError.message
+                : 'Unable to fetch price. Please try again later.';
+
+              setError(result.ticker, {
+                ticker: result.ticker,
+                message: userMessage,
+                code: priceError?.code || 'UNKNOWN_ERROR',
+                timestamp: Date.now(),
+              });
+
+              console.error(`Error fetching ${result.ticker}:`, userMessage);
+            }
           }
         }
       } finally {
@@ -106,18 +142,15 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
     // Update store with new prices
     setPrices(newPrices);
     
-    // Update errors
-    setErrors(newErrors);
-    
     // Clear loading state
     setIsLoading(false);
     setLoadingTickers([]);
 
     // Log results
     const successCount = Object.keys(newPrices).length;
-    const errorCount = Object.keys(newErrors).length;
-    console.log(`Price fetch complete: ${successCount} successful, ${errorCount} failed`);
-  }, [setPrices]);
+    const errorCount = Object.keys(errors).length;
+    console.log(`Price fetch complete: ${successCount} successful, ${errorCount} errors`);
+  }, [setPrices, setError, clearAllErrors]);
 
   /**
    * Refresh prices for previously fetched tickers
@@ -137,8 +170,8 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
    * Clear all errors
    */
   const clearErrors = useCallback(() => {
-    setErrors({});
-  }, []);
+    clearAllErrors();
+  }, [clearAllErrors]);
 
   /**
    * Auto-fetch on mount if tickers provided
@@ -161,6 +194,7 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
     errors,
     lastUpdated: lastFetch,
     clearErrors,
+    clearError,
   };
 }
 

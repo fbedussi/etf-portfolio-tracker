@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { fileService } from '@/services/fileService';
+import { portfolioStorageService } from '@/services/portfolioStorageService';
 import { usePortfolioStore } from '@/store/portfolioStore';
 import type { Portfolio } from '@/types';
 
@@ -39,6 +40,14 @@ export function useFileUpload(): UseFileUploadReturn {
 
       // Update the portfolio store
       setPortfolio(portfolio);
+
+      // Persist to IndexedDB for automatic restoration
+      try {
+        await portfolioStorageService.savePortfolio(portfolio);
+      } catch (storageError) {
+        console.warn('Failed to persist portfolio to IndexedDB:', storageError);
+        // Don't fail the upload if storage fails
+      }
 
       console.log('Portfolio loaded successfully:', portfolio);
     } catch (err) {

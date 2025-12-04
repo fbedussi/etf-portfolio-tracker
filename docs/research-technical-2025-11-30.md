@@ -323,7 +323,7 @@ If Alpha Vantage proves unsuitable (e.g., CORS issues insurmountable, rate limit
 
 ### Next Steps
 
-1. ✅ **API Key Obtained**: `0L6IMQMYH9G93LSI`
+1. ✅ **API Key Obtained**: `<API_KEY_IN_ENV_FILE>`
 2. ✅ **CORS Test**: **SUCCESS! Direct browser calls work - no proxy needed** 🎉
 3. **Implement** (Ready to start):
    - Create API service module for Alpha Vantage calls
@@ -346,15 +346,15 @@ Since CORS works, the implementation is much simpler:
 
 **Test current price for Vanguard FTSE All-World (VWCE)**:
 ```bash
-curl "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=VWCE.DEX&apikey=0L6IMQMYH9G93LSI"
+curl "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=VWCE.DEX&apikey=<API_KEY_IN_ENV_FILE>"
 ```
 
 **Test symbol search**:
 ```bash
-curl "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=vanguard%20world&apikey=0L6IMQMYH9G93LSI"
+curl "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=vanguard%20world&apikey=<API_KEY_IN_ENV_FILE>"
 ```
 
 **Test ETF profile**:
 ```bash
-curl "https://www.alphavantage.co/query?function=ETF_PROFILE&symbol=VWCE.DEX&apikey=0L6IMQMYH9G93LSI"
+curl "https://www.alphavantage.co/query?function=ETF_PROFILE&symbol=VWCE.DEX&apikey=<API_KEY_IN_ENV_FILE>"
 ```

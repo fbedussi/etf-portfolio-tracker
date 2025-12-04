@@ -1,5 +1,6 @@
 import { ALPHA_VANTAGE_CONFIG, API_ENDPOINTS, validateAPIConfig } from '@/config/api.config';
 import type { PriceData, AlphaVantageQuoteResponse } from '@/types/api.types';
+import { retryWithBackoff, isRetryableError } from '@/utils/retry';
 
 /**
  * Error types for price fetching
@@ -7,16 +8,53 @@ import type { PriceData, AlphaVantageQuoteResponse } from '@/types/api.types';
 export class PriceServiceError extends Error {
   code: string;
   ticker?: string;
+  userMessage: string;
 
   constructor(
     message: string,
     code: string,
-    ticker?: string
+    ticker?: string,
+    userMessage?: string
   ) {
     super(message);
     this.name = 'PriceServiceError';
     this.code = code;
     this.ticker = ticker;
+    this.userMessage = userMessage || message;
+  }
+
+  /**
+   * Get user-friendly error message based on error code
+   */
+  getUserFriendlyMessage(): string {
+    switch (this.code) {
+      case 'NETWORK_ERROR':
+        return `Cannot fetch prices. Please check your internet connection and try again.`;
+      
+      case 'TIMEOUT':
+        return `Request timed out for ${this.ticker}. The server took too long to respond.`;
+      
+      case 'RATE_LIMIT_EXCEEDED':
+        return `API limit reached. Prices will refresh in a few minutes. Using cached data where available.`;
+      
+      case 'INVALID_TICKER':
+        return `Price unavailable for ${this.ticker}. Please check the ticker symbol is correct.`;
+      
+      case 'MISSING_API_KEY':
+        return `API key not configured. Please set up your Alpha Vantage API key.`;
+      
+      case 'API_KEY_ERROR':
+        return `API key issue detected. Please verify your Alpha Vantage API key is valid.`;
+      
+      case 'NO_DATA':
+        return `No price data available for ${this.ticker}. The ticker may be delisted or unavailable.`;
+      
+      case 'API_ERROR':
+        return `Unable to fetch prices from the server. Please try again later.`;
+      
+      default:
+        return this.userMessage;
+    }
   }
 }
 
@@ -56,6 +94,27 @@ export class PriceService {
       );
     }
 
+    // Wrap the fetch logic with retry mechanism
+    return retryWithBackoff(
+      async () => this._fetchPriceOnce(ticker),
+      {
+        maxAttempts: 3,
+        delays: [2000, 5000, 10000], // 2s, 5s, 10s
+        onRetry: (attempt, error) => {
+          console.log(`⟳ Retry attempt ${attempt}/3 for ${ticker}: ${error.message}`);
+        },
+        onFinalFailure: (error) => {
+          console.error(`✗ All retry attempts failed for ${ticker}:`, error.message);
+        },
+      }
+    );
+  }
+
+  /**
+   * Single attempt to fetch price (used internally by fetchPrice with retry logic)
+   * @private
+   */
+  private async _fetchPriceOnce(ticker: string): Promise<PriceData> {
     try {
       console.log(`Fetching price for ${ticker}...`);
 

@@ -149,10 +149,10 @@ export function usePortfolio(): UsePortfolioReturn {
 
   // Update store with rebalancing status
   useEffect(() => {
-    if (rebalancingStatus) {
-      setRebalancingStatus(rebalancingStatus);
-    }
-  }, [rebalancingStatus, setRebalancingStatus]);
+    setRebalancingStatus(rebalancingStatus);
+    // setRebalancingStatus is a stable Zustand action, safe to omit from deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rebalancingStatus]);
 
   // Recalculate function for manual triggers
   const recalculate = () => {

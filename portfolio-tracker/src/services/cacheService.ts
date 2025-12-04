@@ -6,7 +6,7 @@ import type { PriceCache, PriceData } from '@/types/api.types';
  */
 export class CacheService {
   private readonly CACHE_KEY = 'portfolio_price_cache';
-  private readonly CACHE_EXPIRATION_MS = 15 * 60 * 1000; // 15 minutes
+  private readonly CACHE_EXPIRATION_MS = 24 * 60 * 60 * 1000; // 24 hours (1 day)
 
   /**
    * Get cached price for a ticker if still fresh

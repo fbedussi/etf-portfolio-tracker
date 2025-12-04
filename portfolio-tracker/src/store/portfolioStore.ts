@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { portfolioStorageService } from '@/services/portfolioStorageService';
 import type {
   Portfolio,
   Holdings,
@@ -23,6 +24,7 @@ interface PortfolioState {
   // Actions
   setPortfolio: (portfolio: Portfolio) => void;
   loadPortfolio: (file: File) => Promise<void>;
+  restorePortfolio: () => Promise<void>;
   refreshPrices: () => Promise<void>;
   clearPortfolio: () => void;
   setError: (error: string | null) => void;
@@ -86,6 +88,23 @@ export const usePortfolioStore = create<PortfolioState>((set, get) => ({
     }
   },
 
+  restorePortfolio: async () => {
+    try {
+      const portfolio = await portfolioStorageService.loadPortfolio();
+      
+      if (portfolio) {
+        set({ 
+          portfolio,
+          error: null,
+        });
+        console.log('Portfolio restored from IndexedDB');
+      }
+    } catch (error) {
+      console.error('Failed to restore portfolio:', error);
+      // Don't set error state for failed restoration
+    }
+  },
+
   clearPortfolio: () => {
     set({
       portfolio: null,
@@ -93,6 +112,11 @@ export const usePortfolioStore = create<PortfolioState>((set, get) => ({
       metrics: null,
       rebalancingStatus: null,
       error: null,
+    });
+
+    // Clear from IndexedDB
+    portfolioStorageService.clearPortfolio().catch((error) => {
+      console.error('Failed to clear portfolio from storage:', error);
     });
   },
 
