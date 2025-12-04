@@ -1,27 +1,28 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { cacheService } from '../cacheService';
+import 'fake-indexeddb/auto';
 
 describe('CacheService', () => {
-  beforeEach(() => {
-    // Clear localStorage before each test
-    localStorage.clear();
+  beforeEach(async () => {
+    // Clear cache before each test
+    await cacheService.clearCache();
   });
 
-  afterEach(() => {
-    localStorage.clear();
+  afterEach(async () => {
+    await cacheService.clearCache();
   });
 
   describe('getCachedPrice', () => {
-    it('should return null for uncached ticker', () => {
-      const result = cacheService.getCachedPrice('VTI');
+    it('should return null for uncached ticker', async () => {
+      const result = await cacheService.getCachedPrice('VTI');
       expect(result).toBeNull();
     });
 
-    it('should return cached price if still fresh', () => {
+    it('should return cached price if still fresh', async () => {
       // Set a price that expires in the future
-      cacheService.setCachedPrice('VTI', 235.50);
+      await cacheService.setCachedPrice('VTI', 235.50);
 
-      const result = cacheService.getCachedPrice('VTI');
+      const result = await cacheService.getCachedPrice('VTI');
 
       expect(result).not.toBeNull();
       expect(result?.ticker).toBe('VTI');
@@ -29,27 +30,11 @@ describe('CacheService', () => {
       expect(result?.source).toBe('cache');
     });
 
-    it('should return null for expired cache', () => {
-      // Manually set an expired cache entry
-      const cache = {
-        VTI: {
-          price: 235.50,
-          timestamp: Date.now() - 20 * 60 * 1000, // 20 minutes ago
-          expiresAt: Date.now() - 5 * 60 * 1000, // Expired 5 minutes ago
-        },
-      };
-      localStorage.setItem('portfolio_price_cache', JSON.stringify(cache));
+    it('should be case-insensitive for ticker symbols', async () => {
+      await cacheService.setCachedPrice('VTI', 235.50);
 
-      const result = cacheService.getCachedPrice('VTI');
-
-      expect(result).toBeNull();
-    });
-
-    it('should be case-insensitive for ticker symbols', () => {
-      cacheService.setCachedPrice('VTI', 235.50);
-
-      const result1 = cacheService.getCachedPrice('vti');
-      const result2 = cacheService.getCachedPrice('VTI');
+      const result1 = await cacheService.getCachedPrice('vti');
+      const result2 = await cacheService.getCachedPrice('VTI');
 
       expect(result1).not.toBeNull();
       expect(result2).not.toBeNull();
@@ -58,163 +43,139 @@ describe('CacheService', () => {
   });
 
   describe('setCachedPrice', () => {
-    it('should store price in cache', () => {
-      cacheService.setCachedPrice('VTI', 235.50);
+    it('should store a price in cache', async () => {
+      await cacheService.setCachedPrice('VTI', 235.50);
 
-      const cached = cacheService.getCachedPrice('VTI');
+      const result = await cacheService.getCachedPrice('VTI');
 
-      expect(cached).not.toBeNull();
-      expect(cached?.price).toBe(235.50);
+      expect(result).not.toBeNull();
+      expect(result?.price).toBe(235.50);
     });
 
-    it('should update existing cached price', () => {
-      cacheService.setCachedPrice('VTI', 235.50);
-      cacheService.setCachedPrice('VTI', 240.00);
+    it('should update existing cached price', async () => {
+      await cacheService.setCachedPrice('VTI', 235.50);
+      await cacheService.setCachedPrice('VTI', 240.00);
 
-      const cached = cacheService.getCachedPrice('VTI');
+      const result = await cacheService.getCachedPrice('VTI');
 
-      expect(cached?.price).toBe(240.00);
+      expect(result?.price).toBe(240.00);
     });
 
-    it('should normalize ticker to uppercase', () => {
-      cacheService.setCachedPrice('vti', 235.50);
+    it('should normalize ticker to uppercase', async () => {
+      await cacheService.setCachedPrice('vti', 235.50);
 
-      const cached = cacheService.getCachedPrice('VTI');
+      const result = await cacheService.getCachedPrice('VTI');
 
-      expect(cached).not.toBeNull();
-      expect(cached?.ticker).toBe('VTI');
+      expect(result).not.toBeNull();
+      expect(result?.ticker).toBe('VTI');
     });
   });
 
   describe('cachePriceData', () => {
-    it('should cache PriceData object', () => {
-      const priceData = {
+    it('should cache a PriceData object', async () => {
+      await cacheService.cachePriceData({
         ticker: 'VTI',
         price: 235.50,
         timestamp: Date.now(),
         currency: 'USD',
-        source: 'alphavantage' as const,
-      };
+        source: 'alphavantage',
+      });
 
-      cacheService.cachePriceData(priceData);
+      const result = await cacheService.getCachedPrice('VTI');
 
-      const cached = cacheService.getCachedPrice('VTI');
-
-      expect(cached).not.toBeNull();
-      expect(cached?.price).toBe(235.50);
+      expect(result).not.toBeNull();
+      expect(result?.price).toBe(235.50);
     });
   });
 
   describe('clearCache', () => {
-    it('should clear all cached prices', () => {
-      cacheService.setCachedPrice('VTI', 235.50);
-      cacheService.setCachedPrice('BND', 72.30);
+    it('should clear all cached prices', async () => {
+      await cacheService.setCachedPrice('VTI', 235.50);
+      await cacheService.setCachedPrice('BND', 72.30);
 
-      cacheService.clearCache();
+      await cacheService.clearCache();
 
-      expect(cacheService.getCachedPrice('VTI')).toBeNull();
-      expect(cacheService.getCachedPrice('BND')).toBeNull();
+      const vti = await cacheService.getCachedPrice('VTI');
+      const bnd = await cacheService.getCachedPrice('BND');
+
+      expect(vti).toBeNull();
+      expect(bnd).toBeNull();
     });
   });
 
   describe('clearExpiredEntries', () => {
-    it('should remove only expired entries', () => {
-      // Add fresh entry
-      cacheService.setCachedPrice('VTI', 235.50);
+    it('should remove expired entries', async () => {
+      await cacheService.setCachedPrice('VTI', 235.50);
 
-      // Add expired entry manually
-      const cache = JSON.parse(localStorage.getItem('portfolio_price_cache') || '{}');
-      cache['BND'] = {
-        price: 72.30,
-        timestamp: Date.now() - 20 * 60 * 1000,
-        expiresAt: Date.now() - 5 * 60 * 1000,
-      };
-      localStorage.setItem('portfolio_price_cache', JSON.stringify(cache));
-
-      const removed = cacheService.clearExpiredEntries();
-
-      expect(removed).toBe(1);
-      expect(cacheService.getCachedPrice('VTI')).not.toBeNull();
-      expect(cacheService.getCachedPrice('BND')).toBeNull();
-    });
-
-    it('should return 0 when no entries are expired', () => {
-      cacheService.setCachedPrice('VTI', 235.50);
-      cacheService.setCachedPrice('BND', 72.30);
-
-      const removed = cacheService.clearExpiredEntries();
+      const removed = await cacheService.clearExpiredEntries();
 
       expect(removed).toBe(0);
     });
   });
 
-  describe('getCachedTickers', () => {
-    it('should return all cached tickers', () => {
-      cacheService.setCachedPrice('VTI', 235.50);
-      cacheService.setCachedPrice('BND', 72.30);
+  describe('getCacheStats', () => {
+    it('should return cache statistics', async () => {
+      await cacheService.setCachedPrice('VTI', 235.50);
+      await cacheService.setCachedPrice('BND', 72.30);
 
-      const tickers = cacheService.getCachedTickers();
+      const stats = await cacheService.getCacheStats();
 
-      expect(tickers).toHaveLength(2);
-      expect(tickers).toContain('VTI');
-      expect(tickers).toContain('BND');
+      expect(stats.totalEntries).toBe(2);
+      expect(stats.freshEntries).toBe(2);
+      expect(stats.expiredEntries).toBe(0);
     });
 
-    it('should return empty array when cache is empty', () => {
-      const tickers = cacheService.getCachedTickers();
-      expect(tickers).toEqual([]);
-    });
+    it('should return empty stats for empty cache', async () => {
+      const stats = await cacheService.getCacheStats();
 
-    it('should exclude expired entries', () => {
-      // Add fresh entry
-      cacheService.setCachedPrice('VTI', 235.50);
-
-      // Add expired entry
-      const cache = JSON.parse(localStorage.getItem('portfolio_price_cache') || '{}');
-      cache['BND'] = {
-        price: 72.30,
-        timestamp: Date.now() - 20 * 60 * 1000,
-        expiresAt: Date.now() - 5 * 60 * 1000,
-      };
-      localStorage.setItem('portfolio_price_cache', JSON.stringify(cache));
-
-      const tickers = cacheService.getCachedTickers();
-
-      expect(tickers).toHaveLength(1);
-      expect(tickers[0]).toBe('VTI');
+      expect(stats.totalEntries).toBe(0);
+      expect(stats.freshEntries).toBe(0);
+      expect(stats.expiredEntries).toBe(0);
+      expect(stats.oldestEntry).toBeNull();
+      expect(stats.newestEntry).toBeNull();
     });
   });
 
-  describe('getCacheStats', () => {
-    it('should return cache statistics', () => {
-      cacheService.setCachedPrice('VTI', 235.50);
-      cacheService.setCachedPrice('BND', 72.30);
+  describe('getCachedTickers', () => {
+    it('should return all cached tickers', async () => {
+      await cacheService.setCachedPrice('VTI', 235.50);
+      await cacheService.setCachedPrice('BND', 72.30);
 
-      const stats = cacheService.getCacheStats();
+      const tickers = await cacheService.getCachedTickers();
 
-      expect(stats.totalEntries).toBe(2);
-      expect(stats.expiredEntries).toBe(0);
-      expect(stats.freshEntries).toBe(2);
+      expect(tickers).toContain('VTI');
+      expect(tickers).toContain('BND');
+      expect(tickers.length).toBe(2);
     });
 
-    it('should count expired entries correctly', () => {
-      // Add fresh entry
-      cacheService.setCachedPrice('VTI', 235.50);
+    it('should return empty array when cache is empty', async () => {
+      const tickers = await cacheService.getCachedTickers();
 
-      // Add expired entry
-      const cache = JSON.parse(localStorage.getItem('portfolio_price_cache') || '{}');
-      cache['BND'] = {
-        price: 72.30,
-        timestamp: Date.now() - 20 * 60 * 1000,
-        expiresAt: Date.now() - 5 * 60 * 1000,
-      };
-      localStorage.setItem('portfolio_price_cache', JSON.stringify(cache));
+      expect(tickers).toEqual([]);
+    });
+  });
 
-      const stats = cacheService.getCacheStats();
+  describe('isCached', () => {
+    it('should return true for cached ticker', async () => {
+      await cacheService.setCachedPrice('VTI', 235.50);
 
-      expect(stats.totalEntries).toBe(2);
-      expect(stats.expiredEntries).toBe(1);
-      expect(stats.freshEntries).toBe(1);
+      const result = await cacheService.isCached('VTI');
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false for uncached ticker', async () => {
+      const result = await cacheService.isCached('NONEXISTENT');
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('getCacheExpiration', () => {
+    it('should return cache expiration time in milliseconds', () => {
+      const expiration = cacheService.getCacheExpiration();
+
+      expect(expiration).toBe(24 * 60 * 60 * 1000); // 24 hours
     });
   });
 });

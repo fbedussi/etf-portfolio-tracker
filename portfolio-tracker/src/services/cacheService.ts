@@ -1,42 +1,49 @@
-import type { PriceCache, PriceData } from '@/types/api.types';
+import type { PriceData } from '@/types/api.types';
+import { priceCacheStorageService } from './priceCacheStorageService';
 
 /**
- * Cache service for storing ETF prices in localStorage
+ * Cache service for storing ETF prices in IndexedDB
  * Reduces API calls by caching prices with configurable expiration
  */
 export class CacheService {
-  private readonly CACHE_KEY = 'portfolio_price_cache';
   private readonly CACHE_EXPIRATION_MS = 24 * 60 * 60 * 1000; // 24 hours (1 day)
+  private initPromise: Promise<void> | null = null;
+
+  /**
+   * Initialize cache service and migrate from localStorage if needed
+   */
+  private async ensureInitialized(): Promise<void> {
+    if (this.initPromise) {
+      return this.initPromise;
+    }
+
+    this.initPromise = (async () => {
+      await priceCacheStorageService.initialize();
+      await priceCacheStorageService.migrateFromLocalStorage();
+    })();
+
+    return this.initPromise;
+  }
 
   /**
    * Get cached price for a ticker if still fresh
    * @param ticker - ETF ticker symbol
    * @returns PriceData if cached and fresh, null otherwise
    */
-  getCachedPrice(ticker: string): PriceData | null {
+  async getCachedPrice(ticker: string): Promise<PriceData | null> {
     try {
-      const cache = this.readCache();
-      const normalizedTicker = ticker.toUpperCase();
-      const cached = cache[normalizedTicker];
+      await this.ensureInitialized();
+      const cached = await priceCacheStorageService.getCachedPrice(ticker);
 
       if (!cached) {
         return null;
       }
 
-      // Check if cache is still fresh
       const now = Date.now();
-      if (now > cached.expiresAt) {
-        console.log(`Cache expired for ${ticker}`);
-        // Remove expired entry
-        delete cache[normalizedTicker];
-        this.writeCache(cache);
-        return null;
-      }
-
       console.log(`Cache hit for ${ticker} (expires in ${Math.round((cached.expiresAt - now) / 1000 / 60)}m)`);
 
       return {
-        ticker: normalizedTicker,
+        ticker: cached.ticker,
         price: cached.price,
         timestamp: cached.timestamp,
         currency: 'USD',
@@ -53,19 +60,14 @@ export class CacheService {
    * @param ticker - ETF ticker symbol
    * @param price - Current price
    */
-  setCachedPrice(ticker: string, price: number): void {
+  async setCachedPrice(ticker: string, price: number): Promise<void> {
     try {
-      const cache = this.readCache();
-      const normalizedTicker = ticker.toUpperCase();
-      const now = Date.now();
-
-      cache[normalizedTicker] = {
+      await this.ensureInitialized();
+      await priceCacheStorageService.setCachedPrice(
+        ticker,
         price,
-        timestamp: now,
-        expiresAt: now + this.CACHE_EXPIRATION_MS,
-      };
-
-      this.writeCache(cache);
+        this.CACHE_EXPIRATION_MS
+      );
       console.log(`Cached ${ticker} at $${price.toFixed(2)}`);
     } catch (error) {
       console.error('Error writing to cache:', error);
@@ -76,17 +78,17 @@ export class CacheService {
    * Store PriceData in cache
    * @param priceData - PriceData object from API
    */
-  cachePriceData(priceData: PriceData): void {
-    this.setCachedPrice(priceData.ticker, priceData.price);
+  async cachePriceData(priceData: PriceData): Promise<void> {
+    await this.setCachedPrice(priceData.ticker, priceData.price);
   }
 
   /**
    * Clear all cached prices
    */
-  clearCache(): void {
+  async clearCache(): Promise<void> {
     try {
-      localStorage.removeItem(this.CACHE_KEY);
-      console.log('Price cache cleared');
+      await this.ensureInitialized();
+      await priceCacheStorageService.clearCache();
     } catch (error) {
       console.error('Error clearing cache:', error);
     }
@@ -96,25 +98,10 @@ export class CacheService {
    * Clear expired entries from cache
    * @returns Number of entries removed
    */
-  clearExpiredEntries(): number {
+  async clearExpiredEntries(): Promise<number> {
     try {
-      const cache = this.readCache();
-      const now = Date.now();
-      let removed = 0;
-
-      Object.keys(cache).forEach((ticker) => {
-        if (now > cache[ticker].expiresAt) {
-          delete cache[ticker];
-          removed++;
-        }
-      });
-
-      if (removed > 0) {
-        this.writeCache(cache);
-        console.log(`Removed ${removed} expired cache entries`);
-      }
-
-      return removed;
+      await this.ensureInitialized();
+      return await priceCacheStorageService.clearExpiredEntries();
     } catch (error) {
       console.error('Error clearing expired entries:', error);
       return 0;
@@ -124,32 +111,16 @@ export class CacheService {
   /**
    * Get cache statistics
    */
-  getCacheStats(): {
+  async getCacheStats(): Promise<{
     totalEntries: number;
     freshEntries: number;
     expiredEntries: number;
     oldestEntry: number | null;
     newestEntry: number | null;
-  } {
+  }> {
     try {
-      const cache = this.readCache();
-      const now = Date.now();
-      const tickers = Object.keys(cache);
-
-      const fresh = tickers.filter((t) => cache[t].expiresAt > now);
-      const expired = tickers.filter((t) => cache[t].expiresAt <= now);
-
-      const timestamps = tickers.map((t) => cache[t].timestamp);
-      const oldest = timestamps.length > 0 ? Math.min(...timestamps) : null;
-      const newest = timestamps.length > 0 ? Math.max(...timestamps) : null;
-
-      return {
-        totalEntries: tickers.length,
-        freshEntries: fresh.length,
-        expiredEntries: expired.length,
-        oldestEntry: oldest,
-        newestEntry: newest,
-      };
+      await this.ensureInitialized();
+      return await priceCacheStorageService.getCacheStats();
     } catch (error) {
       console.error('Error getting cache stats:', error);
       return {
@@ -165,12 +136,10 @@ export class CacheService {
   /**
    * Get all cached tickers (fresh only)
    */
-  getCachedTickers(): string[] {
+  async getCachedTickers(): Promise<string[]> {
     try {
-      const cache = this.readCache();
-      const now = Date.now();
-
-      return Object.keys(cache).filter((ticker) => cache[ticker].expiresAt > now);
+      await this.ensureInitialized();
+      return await priceCacheStorageService.getCachedTickers();
     } catch (error) {
       console.error('Error getting cached tickers:', error);
       return [];
@@ -180,8 +149,9 @@ export class CacheService {
   /**
    * Check if a ticker is cached and fresh
    */
-  isCached(ticker: string): boolean {
-    return this.getCachedPrice(ticker) !== null;
+  async isCached(ticker: string): Promise<boolean> {
+    const cached = await this.getCachedPrice(ticker);
+    return cached !== null;
   }
 
   /**
@@ -189,62 +159,6 @@ export class CacheService {
    */
   getCacheExpiration(): number {
     return this.CACHE_EXPIRATION_MS;
-  }
-
-  /**
-   * Read cache from localStorage
-   */
-  private readCache(): PriceCache {
-    try {
-      const cached = localStorage.getItem(this.CACHE_KEY);
-      if (!cached) {
-        return {};
-      }
-
-      const parsed = JSON.parse(cached);
-      
-      // Validate cache structure
-      if (typeof parsed !== 'object' || parsed === null) {
-        console.warn('Invalid cache structure, resetting cache');
-        return {};
-      }
-
-      return parsed;
-    } catch (error) {
-      console.error('Error reading cache, resetting:', error);
-      return {};
-    }
-  }
-
-  /**
-   * Write cache to localStorage
-   */
-  private writeCache(cache: PriceCache): void {
-    try {
-      localStorage.setItem(this.CACHE_KEY, JSON.stringify(cache));
-    } catch (error) {
-      // Handle localStorage quota exceeded
-      if (error instanceof Error && error.name === 'QuotaExceededError') {
-        console.error('localStorage quota exceeded, clearing old cache');
-        this.clearCache();
-      } else {
-        console.error('Error writing to cache:', error);
-      }
-    }
-  }
-
-  /**
-   * Export cache for debugging
-   */
-  exportCache(): PriceCache {
-    return this.readCache();
-  }
-
-  /**
-   * Import cache (for testing or migration)
-   */
-  importCache(cache: PriceCache): void {
-    this.writeCache(cache);
   }
 }
 

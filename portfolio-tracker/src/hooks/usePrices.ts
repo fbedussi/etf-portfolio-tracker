@@ -50,7 +50,7 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
 
     // First, check cache for all tickers
     for (const ticker of tickersToFetch) {
-      const cached = cacheService.getCachedPrice(ticker);
+      const cached = await cacheService.getCachedPrice(ticker);
       if (cached) {
         newPrices[ticker] = cached;
         console.log(`Using cached price for ${ticker}`);
@@ -86,7 +86,7 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
         for (const result of fetchResults) {
           if (result.success && 'priceData' in result) {
             // Success: cache and store price
-            cacheService.cachePriceData(result.priceData);
+            await cacheService.cachePriceData(result.priceData);
             newPrices[result.ticker] = result.priceData;
           } else {
             // Error: try fallback to cache, then create error
@@ -96,7 +96,7 @@ export function usePrices(tickers?: string[]): UsePricesReturn {
               : null;
 
             // Attempt fallback to cached price (even if expired)
-            const cachedData = cacheService.getCachedPrice(result.ticker);
+            const cachedData = await cacheService.getCachedPrice(result.ticker);
             if (cachedData) {
               // Use cached data with warning
               newPrices[result.ticker] = {
