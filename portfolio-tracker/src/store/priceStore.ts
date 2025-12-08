@@ -5,7 +5,7 @@ import type { PriceData, PriceCache } from '@/types';
  * Price error information
  */
 export interface PriceError {
-  ticker: string;
+  isin: string;
   message: string;
   code: string;
   timestamp: number;
@@ -88,7 +88,7 @@ export const usePriceStore = create<PriceState>((set, get) => ({
     }
 
     return {
-      ticker,
+      isin: ticker,
       price: cached.price,
       timestamp: cached.timestamp,
       currency: 'USD', // TODO: Make configurable

@@ -1,14 +1,12 @@
-// API and Price Data Models
-
-export interface PriceData {
-  ticker: string;
+export type PriceData = {
+  isin: string;
   price: number;
   timestamp: number; // Unix timestamp
   currency: string; // e.g., "EUR", "USD"
   source: 'api' | 'cache';
 }
 
-export interface PriceCache {
+export type PriceCache = {
   [ticker: string]: {
     price: number;
     timestamp: number;
@@ -16,26 +14,40 @@ export interface PriceCache {
   };
 }
 
-export interface APIResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: {
-    code: string;
-    message: string;
-  };
+export type ApiResponse = {
+  intradayPoint: IntradayPoint[]
+  status: number,
+  entityID: string,
+  view: string,
+  sessionQuality: string,
+  currency: string,
+  accuracy: number,
+  tickSizeRule: string,
+  label: string,
+  instrType: string
 }
 
-export interface AlphaVantageQuoteResponse {
-  'Global Quote': {
-    '01. symbol': string;
-    '02. open': string;
-    '03. high': string;
-    '04. low': string;
-    '05. price': string;
-    '06. volume': string;
-    '07. latest trading day': string;
-    '08. previous close': string;
-    '09. change': string;
-    '10. change percent': string;
-  };
+export type IntradayPoint = {
+  time: string, //"20251208-09:10:00"
+  nbTrade: number,
+  beginPx: number,
+  beginTime: string, //"09:10:43"
+  endPx: number,
+  endTime: string, //"09:10:43"
+  highPx: number,
+  lowPx: number,
+  beginAskPx: number,
+  endAskPx: number,
+  highAskPx: number,
+  lowAskPx: number,
+  beginBidPx: number,
+  endBidPx: number,
+  highBidPx: number,
+  lowBidPx: number,
+  vol: number,
+  amt: number,
+  previousClosingPx: number,
+  previousClosingDt: string, //"20251205"
+  previousSettlementPx: number,
+  previousSettlementDt: string, //"20251205
 }

@@ -9,41 +9,30 @@ export class CacheService {
   private readonly CACHE_EXPIRATION_MS = 24 * 60 * 60 * 1000; // 24 hours (1 day)
   private initPromise: Promise<void> | null = null;
 
-  /**
-   * Initialize cache service and migrate from localStorage if needed
-   */
   private async ensureInitialized(): Promise<void> {
     if (this.initPromise) {
       return this.initPromise;
     }
 
-    this.initPromise = (async () => {
-      await priceCacheStorageService.initialize();
-      await priceCacheStorageService.migrateFromLocalStorage();
-    })();
-
+    this.initPromise = priceCacheStorageService.initialize();
+  
     return this.initPromise;
   }
 
-  /**
-   * Get cached price for a ticker if still fresh
-   * @param ticker - ETF ticker symbol
-   * @returns PriceData if cached and fresh, null otherwise
-   */
-  async getCachedPrice(ticker: string): Promise<PriceData | null> {
+  async getCachedPrice(isin: string): Promise<PriceData | null> {
     try {
       await this.ensureInitialized();
-      const cached = await priceCacheStorageService.getCachedPrice(ticker);
+      const cached = await priceCacheStorageService.getCachedPrice(isin);
 
       if (!cached) {
         return null;
       }
 
       const now = Date.now();
-      console.log(`Cache hit for ${ticker} (expires in ${Math.round((cached.expiresAt - now) / 1000 / 60)}m)`);
+      console.log(`Cache hit for ${isin} (expires in ${Math.round((cached.expiresAt - now) / 1000 / 60)}m)`);
 
       return {
-        ticker: cached.ticker,
+        isin: cached.isin,
         price: cached.price,
         timestamp: cached.timestamp,
         currency: 'USD',
@@ -55,36 +44,24 @@ export class CacheService {
     }
   }
 
-  /**
-   * Store price in cache
-   * @param ticker - ETF ticker symbol
-   * @param price - Current price
-   */
-  async setCachedPrice(ticker: string, price: number): Promise<void> {
+  async setCachedPrice(isin: string, price: number): Promise<void> {
     try {
       await this.ensureInitialized();
       await priceCacheStorageService.setCachedPrice(
-        ticker,
+        isin,
         price,
         this.CACHE_EXPIRATION_MS
       );
-      console.log(`Cached ${ticker} at $${price.toFixed(2)}`);
+      console.log(`Cached ${isin} at $${price.toFixed(2)}`);
     } catch (error) {
       console.error('Error writing to cache:', error);
     }
   }
 
-  /**
-   * Store PriceData in cache
-   * @param priceData - PriceData object from API
-   */
   async cachePriceData(priceData: PriceData): Promise<void> {
-    await this.setCachedPrice(priceData.ticker, priceData.price);
+    await this.setCachedPrice(priceData.isin, priceData.price);
   }
 
-  /**
-   * Clear all cached prices
-   */
   async clearCache(): Promise<void> {
     try {
       await this.ensureInitialized();
@@ -94,10 +71,6 @@ export class CacheService {
     }
   }
 
-  /**
-   * Clear expired entries from cache
-   * @returns Number of entries removed
-   */
   async clearExpiredEntries(): Promise<number> {
     try {
       await this.ensureInitialized();
@@ -108,9 +81,6 @@ export class CacheService {
     }
   }
 
-  /**
-   * Get cache statistics
-   */
   async getCacheStats(): Promise<{
     totalEntries: number;
     freshEntries: number;
@@ -133,30 +103,21 @@ export class CacheService {
     }
   }
 
-  /**
-   * Get all cached tickers (fresh only)
-   */
-  async getCachedTickers(): Promise<string[]> {
+  async getCachedIsins(): Promise<string[]> {
     try {
       await this.ensureInitialized();
-      return await priceCacheStorageService.getCachedTickers();
+      return await priceCacheStorageService.getCachedIsins();
     } catch (error) {
-      console.error('Error getting cached tickers:', error);
+      console.error('Error getting cached isins:', error);
       return [];
     }
   }
 
-  /**
-   * Check if a ticker is cached and fresh
-   */
-  async isCached(ticker: string): Promise<boolean> {
-    const cached = await this.getCachedPrice(ticker);
+  async isCached(isin: string): Promise<boolean> {
+    const cached = await this.getCachedPrice(isin);
     return cached !== null;
   }
 
-  /**
-   * Get cache expiration time in milliseconds
-   */
   getCacheExpiration(): number {
     return this.CACHE_EXPIRATION_MS;
   }

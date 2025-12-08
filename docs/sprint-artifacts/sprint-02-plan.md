@@ -138,7 +138,7 @@ interface UseFileUpload {
 
 **Acceptance Criteria:**
 - [x] `config/api.config.ts` with Alpha Vantage endpoints
-- [x] Environment variable for API key (`VITE_ALPHAVANTAGE_API_KEY`)
+- [x] Environment variable for API key (`VITE_API_TOKEN`)
 - [x] `.env.example` file with placeholder
 - [x] `.env` added to `.gitignore`
 - [x] API key not hardcoded in source
@@ -147,7 +147,7 @@ interface UseFileUpload {
 ```typescript
 export const API_CONFIG = {
   baseURL: 'https://www.alphavantage.co/query',
-  apiKey: import.meta.env.VITE_ALPHAVANTAGE_API_KEY,
+  apiKey: import.meta.env.VITE_API_TOKEN,
   timeout: 10000,
   rateLimit: {
     callsPerMinute: 5,

@@ -15,34 +15,29 @@ import { useEffect } from 'react';
  * Shows portfolio value, allocation chart, and holdings table.
  */
 export function Dashboard() {
-  const { metrics } = usePortfolio();
   const portfolio = usePortfolioStore((state) => state.portfolio);
-  const { fetchPrices, refreshPrices, errors, clearError, clearErrors, lastUpdated } = usePrices();
+  const { fetchPrices, refreshPrices, clearError, clearErrors, lastUpdated } = usePrices();
   const priceErrors = usePriceStore((state) => state.errors);
   const isOnline = useOnlineStatus();
 
   // Automatically fetch prices when portfolio is loaded
+  // TODO: this is to prevent useEffect loop, fix it in a more elegant way
+  const tickers = Object.keys(portfolio?.etfs || {}).join(',');
   useEffect(() => {
-    if (portfolio?.etfs) {
-      const tickers = Object.keys(portfolio.etfs);
-      if (tickers.length > 0) {
-        console.log('Fetching prices for tickers:', tickers);
-        fetchPrices(tickers);
-      }
-    }
-  }, [portfolio, fetchPrices]);
+    fetchPrices(tickers.split(','));
+  }, [tickers, fetchPrices]);
 
   // Automatically refresh prices when coming back online
-  useEffect(() => {
-    if (isOnline && portfolio?.etfs) {
-      const tickers = Object.keys(portfolio.etfs);
-      if (tickers.length > 0 && lastUpdated) {
-        // Only refresh if we've fetched before
-        console.log('Back online - refreshing prices');
-        refreshPrices();
-      }
-    }
-  }, [isOnline, portfolio, lastUpdated, refreshPrices]);
+  // useEffect(() => {
+  //   if (isOnline && portfolio?.etfs) {
+  //     const tickers = Object.keys(portfolio.etfs);
+  //     if (tickers.length > 0 && lastUpdated) {
+  //       // Only refresh if we've fetched before
+  //       console.log('Back online - refreshing prices');
+  //       refreshPrices();
+  //     }
+  //   }
+  // }, [isOnline, portfolio, lastUpdated, refreshPrices]);
 
   return (
     <div className="container mx-auto space-y-6 py-6" data-testid="dashboard">

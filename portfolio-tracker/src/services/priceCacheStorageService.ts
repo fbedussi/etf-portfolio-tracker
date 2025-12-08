@@ -3,14 +3,12 @@
  * Provides persistent, high-capacity storage for ETF price data
  */
 
-import type { PriceData } from '@/types/api.types';
-
 const DB_NAME = 'portfolio-tracker-db';
 const DB_VERSION = 1;
 const PRICE_CACHE_STORE = 'price-cache';
 
 export interface CachedPrice {
-  ticker: string;
+  isin: string;
   price: number;
   timestamp: number;
   expiresAt: number;
@@ -20,9 +18,6 @@ export class PriceCacheStorageService {
   private db: IDBDatabase | null = null;
   private initPromise: Promise<void> | null = null;
 
-  /**
-   * Initialize IndexedDB connection
-   */
   async initialize(): Promise<void> {
     if (this.db) {
       return; // Already initialized
@@ -52,13 +47,13 @@ export class PriceCacheStorageService {
         // Create price cache store if it doesn't exist
         if (!db.objectStoreNames.contains(PRICE_CACHE_STORE)) {
           const priceStore = db.createObjectStore(PRICE_CACHE_STORE, {
-            keyPath: 'ticker',
+            keyPath: 'isin',
           });
-          
+
           // Create indexes for efficient queries
           priceStore.createIndex('timestamp', 'timestamp', { unique: false });
           priceStore.createIndex('expiresAt', 'expiresAt', { unique: false });
-          
+
           console.log('Price cache object store created');
         }
       };
@@ -67,10 +62,7 @@ export class PriceCacheStorageService {
     return this.initPromise;
   }
 
-  /**
-   * Get cached price for a ticker
-   */
-  async getCachedPrice(ticker: string): Promise<CachedPrice | null> {
+  async getCachedPrice(isin: string): Promise<CachedPrice | null> {
     await this.initialize();
 
     if (!this.db) {
@@ -80,11 +72,11 @@ export class PriceCacheStorageService {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([PRICE_CACHE_STORE], 'readonly');
       const store = transaction.objectStore(PRICE_CACHE_STORE);
-      const request = store.get(ticker.toUpperCase());
+      const request = store.get(isin.toUpperCase());
 
       request.onsuccess = () => {
         const cached = request.result as CachedPrice | undefined;
-        
+
         if (!cached) {
           resolve(null);
           return;
@@ -93,7 +85,7 @@ export class PriceCacheStorageService {
         // Check if still fresh
         if (Date.now() > cached.expiresAt) {
           // Expired, remove it
-          this.deleteCachedPrice(ticker).catch(console.error);
+          this.deleteCachedPrice(isin).catch(console.error);
           resolve(null);
           return;
         }
@@ -108,11 +100,8 @@ export class PriceCacheStorageService {
     });
   }
 
-  /**
-   * Store price in cache
-   */
   async setCachedPrice(
-    ticker: string,
+    isin: string,
     price: number,
     expirationMs: number
   ): Promise<void> {
@@ -124,7 +113,7 @@ export class PriceCacheStorageService {
 
     const now = Date.now();
     const cachedPrice: CachedPrice = {
-      ticker: ticker.toUpperCase(),
+      isin: isin.toUpperCase(),
       price,
       timestamp: now,
       expiresAt: now + expirationMs,
@@ -146,10 +135,7 @@ export class PriceCacheStorageService {
     });
   }
 
-  /**
-   * Delete a cached price
-   */
-  async deleteCachedPrice(ticker: string): Promise<void> {
+  async deleteCachedPrice(isin: string): Promise<void> {
     await this.initialize();
 
     if (!this.db) {
@@ -159,7 +145,7 @@ export class PriceCacheStorageService {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([PRICE_CACHE_STORE], 'readwrite');
       const store = transaction.objectStore(PRICE_CACHE_STORE);
-      const request = store.delete(ticker.toUpperCase());
+      const request = store.delete(isin.toUpperCase());
 
       request.onsuccess = () => {
         resolve();
@@ -172,9 +158,6 @@ export class PriceCacheStorageService {
     });
   }
 
-  /**
-   * Clear all cached prices
-   */
   async clearCache(): Promise<void> {
     await this.initialize();
 
@@ -199,10 +182,7 @@ export class PriceCacheStorageService {
     });
   }
 
-  /**
-   * Get all cached tickers (fresh only)
-   */
-  async getCachedTickers(): Promise<string[]> {
+  async getCachedIsins(): Promise<string[]> {
     await this.initialize();
 
     if (!this.db) {
@@ -215,20 +195,17 @@ export class PriceCacheStorageService {
       const request = store.getAllKeys();
 
       request.onsuccess = () => {
-        const tickers = request.result as string[];
-        resolve(tickers);
+        const isins = request.result as string[];
+        resolve(isins);
       };
 
       request.onerror = () => {
-        console.error('Error getting cached tickers:', request.error);
+        console.error('Error getting cached isins:', request.error);
         reject(request.error);
       };
     });
   }
 
-  /**
-   * Get all cached prices
-   */
   async getAllCachedPrices(): Promise<CachedPrice[]> {
     await this.initialize();
 
@@ -253,9 +230,6 @@ export class PriceCacheStorageService {
     });
   }
 
-  /**
-   * Clear expired entries from cache
-   */
   async clearExpiredEntries(): Promise<number> {
     await this.initialize();
 
@@ -270,14 +244,14 @@ export class PriceCacheStorageService {
       const transaction = this.db!.transaction([PRICE_CACHE_STORE], 'readwrite');
       const store = transaction.objectStore(PRICE_CACHE_STORE);
       const index = store.index('expiresAt');
-      
+
       // Get all entries that have expired (expiresAt < now)
       const range = IDBKeyRange.upperBound(now);
       const request = index.openCursor(range);
 
       request.onsuccess = (event) => {
         const cursor = (event.target as IDBRequest).result;
-        
+
         if (cursor) {
           cursor.delete();
           removed++;
@@ -298,9 +272,6 @@ export class PriceCacheStorageService {
     });
   }
 
-  /**
-   * Get cache statistics
-   */
   async getCacheStats(): Promise<{
     totalEntries: number;
     freshEntries: number;
@@ -331,49 +302,6 @@ export class PriceCacheStorageService {
       oldestEntry: oldest,
       newestEntry: newest,
     };
-  }
-
-  /**
-   * Migrate data from localStorage to IndexedDB
-   */
-  async migrateFromLocalStorage(): Promise<number> {
-    const CACHE_KEY = 'portfolio_price_cache';
-    
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (!cached) {
-        return 0; // Nothing to migrate
-      }
-
-      const localStorageCache = JSON.parse(cached);
-      const tickers = Object.keys(localStorageCache);
-      
-      let migrated = 0;
-      for (const ticker of tickers) {
-        const entry = localStorageCache[ticker];
-        
-        // Only migrate if still fresh
-        if (Date.now() < entry.expiresAt) {
-          await this.setCachedPrice(
-            ticker,
-            entry.price,
-            entry.expiresAt - Date.now()
-          );
-          migrated++;
-        }
-      }
-
-      // Clear localStorage cache after successful migration
-      if (migrated > 0) {
-        localStorage.removeItem(CACHE_KEY);
-        console.log(`Migrated ${migrated} price entries from localStorage to IndexedDB`);
-      }
-
-      return migrated;
-    } catch (error) {
-      console.error('Error migrating price cache:', error);
-      return 0;
-    }
   }
 }
 
