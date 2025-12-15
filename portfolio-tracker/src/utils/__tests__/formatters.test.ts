@@ -69,7 +69,7 @@ describe('formatRelativeTime', () => {
 
 describe('formatCurrency', () => {
   it('should format USD currency by default', () => {
-    expect(formatCurrency(1234.56)).toBe('$1,234.56');
+    expect(formatCurrency(1234.56)).toBe('€1,234.56');
   });
 
   it('should format with custom currency', () => {
@@ -77,23 +77,23 @@ describe('formatCurrency', () => {
   });
 
   it('should handle zero values', () => {
-    expect(formatCurrency(0)).toBe('$0.00');
+    expect(formatCurrency(0)).toBe('€0.00');
   });
 
   it('should handle negative values', () => {
-    expect(formatCurrency(-1234.56)).toBe('-$1,234.56');
+    expect(formatCurrency(-1234.56)).toBe('-€1,234.56');
   });
 
   it('should format large numbers with commas', () => {
-    expect(formatCurrency(1234567.89)).toBe('$1,234,567.89');
+    expect(formatCurrency(1234567.89)).toBe('€1,234,567.89');
   });
 
   it('should handle null values', () => {
-    expect(formatCurrency(null)).toBe('$0.00');
+    expect(formatCurrency(null)).toBe('€0.00');
   });
 
   it('should handle undefined values', () => {
-    expect(formatCurrency(undefined)).toBe('$0.00');
+    expect(formatCurrency(undefined)).toBe('€0.00');
   });
 });
 

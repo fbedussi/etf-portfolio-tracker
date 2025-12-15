@@ -34,6 +34,14 @@ export class PriceService {
       );
     }
 
+    if (!API_CONFIG.apiToken) {
+      throw new PriceServiceError(
+        'API token is not configured',
+        'MISSING_API_TOKEN',
+        isin
+      );
+    }
+
     return this._fetchPriceOnce(isin);
   }
 
@@ -66,6 +74,22 @@ export class PriceService {
       }
 
       const data = await response.json() as ApiResponse;
+
+      if (data.status === 2007) {
+        throw new PriceServiceError(
+          'Invalid isin',
+          'INVALID_ISIN',
+          isin
+        );
+      }
+
+      if (!data?.intradayPoint?.length) {
+        throw new PriceServiceError(
+          'No price data available',
+          'NO_DATA',
+          isin
+        );
+      }
 
       const priceData: PriceData = {
         isin: isin.toUpperCase(),

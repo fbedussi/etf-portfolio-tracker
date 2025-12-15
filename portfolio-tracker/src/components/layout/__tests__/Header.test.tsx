@@ -83,7 +83,7 @@ describe('Header', () => {
         isLoading: false,
         lastUpdated: null,
         fetchPrices: vi.fn(),
-        loadingTickers: [],
+        loadingIsins: [],
         errors: {},
         clearErrors: vi.fn(),
       });
@@ -104,7 +104,7 @@ describe('Header', () => {
         isLoading: true,
         lastUpdated: null,
         fetchPrices: vi.fn(),
-        loadingTickers: [],
+        loadingIsins: [],
         errors: {},
         clearErrors: vi.fn(),
       });
@@ -121,7 +121,7 @@ describe('Header', () => {
         isLoading: true,
         lastUpdated: null,
         fetchPrices: vi.fn(),
-        loadingTickers: [],
+        loadingIsins: [],
         errors: {},
         clearErrors: vi.fn(),
       });
@@ -139,7 +139,7 @@ describe('Header', () => {
         isLoading: false,
         lastUpdated: null,
         fetchPrices: vi.fn(),
-        loadingTickers: [],
+        loadingIsins: [],
         errors: {},
         clearErrors: vi.fn(),
       });
@@ -159,7 +159,7 @@ describe('Header', () => {
         isLoading: false,
         lastUpdated: Date.now() - 300000, // 5 minutes ago
         fetchPrices: vi.fn(),
-        loadingTickers: [],
+        loadingIsins: [],
         errors: {},
         clearErrors: vi.fn(),
       });
@@ -175,7 +175,7 @@ describe('Header', () => {
         isLoading: false,
         lastUpdated: null,
         fetchPrices: vi.fn(),
-        loadingTickers: [],
+        loadingIsins: [],
         errors: {},
         clearErrors: vi.fn(),
       });
@@ -189,13 +189,13 @@ describe('Header', () => {
     it('should display "Live" badge when all prices are from API', async () => {
       const usePricesModule = await import('@/hooks/usePrices');
       const priceStoreModule = await import('@/store/priceStore');
-      
+
       vi.mocked(usePricesModule.usePrices).mockReturnValue({
         refreshPrices: vi.fn(),
         isLoading: false,
         lastUpdated: Date.now(),
         fetchPrices: vi.fn(),
-        loadingTickers: [],
+        loadingIsins: [],
         errors: {},
         clearErrors: vi.fn(),
       });
@@ -212,13 +212,13 @@ describe('Header', () => {
     it('should display "Cached" badge when all prices are from cache', async () => {
       const usePricesModule = await import('@/hooks/usePrices');
       const priceStoreModule = await import('@/store/priceStore');
-      
+
       vi.mocked(usePricesModule.usePrices).mockReturnValue({
         refreshPrices: vi.fn(),
         isLoading: false,
         lastUpdated: Date.now(),
         fetchPrices: vi.fn(),
-        loadingTickers: [],
+        loadingIsins: [],
         errors: {},
         clearErrors: vi.fn(),
       });
@@ -235,13 +235,13 @@ describe('Header', () => {
     it('should display "Mixed" badge when prices are from both API and cache', async () => {
       const usePricesModule = await import('@/hooks/usePrices');
       const priceStoreModule = await import('@/store/priceStore');
-      
+
       vi.mocked(usePricesModule.usePrices).mockReturnValue({
         refreshPrices: vi.fn(),
         isLoading: false,
         lastUpdated: Date.now(),
         fetchPrices: vi.fn(),
-        loadingTickers: [],
+        loadingIsins: [],
         errors: {},
         clearErrors: vi.fn(),
       });
@@ -258,13 +258,13 @@ describe('Header', () => {
     it('should not display source badge when no prices exist', async () => {
       const usePricesModule = await import('@/hooks/usePrices');
       const priceStoreModule = await import('@/store/priceStore');
-      
+
       vi.mocked(usePricesModule.usePrices).mockReturnValue({
         refreshPrices: vi.fn(),
         isLoading: false,
         lastUpdated: Date.now(),
         fetchPrices: vi.fn(),
-        loadingTickers: [],
+        loadingIsins: [],
         errors: {},
         clearErrors: vi.fn(),
       });
@@ -344,7 +344,7 @@ describe('Header', () => {
       });
 
       const { container } = render(<Header />);
-      
+
       // Check that the Sun icon is rendered (lucide-react renders as <svg>)
       const themeButton = screen.getByRole('button', { name: /theme/i });
       expect(themeButton).toBeInTheDocument();
@@ -361,7 +361,7 @@ describe('Header', () => {
       });
 
       const { container } = render(<Header />);
-      
+
       const themeButton = screen.getByRole('button', { name: /theme/i });
       expect(themeButton).toBeInTheDocument();
       expect(themeButton.querySelector('svg')).toBeInTheDocument();
@@ -377,7 +377,7 @@ describe('Header', () => {
       });
 
       const { container } = render(<Header />);
-      
+
       const themeButton = screen.getByRole('button', { name: /theme/i });
       expect(themeButton).toBeInTheDocument();
       expect(themeButton.querySelector('svg')).toBeInTheDocument();
@@ -387,7 +387,7 @@ describe('Header', () => {
   describe('Load Different Portfolio Button', () => {
     it('should not display button when portfolio is not loaded', async () => {
       const portfolioStoreModule = await import('@/store/portfolioStore');
-      
+
       // Mock the usePortfolioStore to use a selector function
       vi.mocked(portfolioStoreModule.usePortfolioStore).mockImplementation((selector: any) => {
         const state = {
@@ -403,7 +403,7 @@ describe('Header', () => {
 
     it('should display button when portfolio is loaded', async () => {
       const portfolioStoreModule = await import('@/store/portfolioStore');
-      
+
       vi.mocked(portfolioStoreModule.usePortfolioStore).mockImplementation((selector: any) => {
         const state = {
           portfolio: {
@@ -514,7 +514,7 @@ describe('Header', () => {
       render(<Header />);
 
       const loadButton = screen.getByRole('button', { name: /load different portfolio/i });
-      
+
       // Verify state before clicking
       expect(mockClearPortfolio).not.toHaveBeenCalled();
       expect(mockClearAllPrices).not.toHaveBeenCalled();

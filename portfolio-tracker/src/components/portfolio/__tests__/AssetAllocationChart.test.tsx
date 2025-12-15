@@ -33,7 +33,7 @@ describe('AssetAllocationChart', () => {
 
     expect(screen.getByText('Asset Allocation')).toBeInTheDocument();
     expect(screen.getByText('Current portfolio distribution')).toBeInTheDocument();
-    
+
     // Check for loading skeleton (animated pulse)
     const skeletons = document.querySelectorAll('.animate-pulse');
     expect(skeletons.length).toBeGreaterThan(0);
@@ -59,7 +59,7 @@ describe('AssetAllocationChart', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       },
@@ -71,7 +71,7 @@ describe('AssetAllocationChart', () => {
     render(<AssetAllocationChart />);
 
     expect(screen.getByText('Asset Allocation')).toBeInTheDocument();
-    
+
     // Check that chart container is rendered (Recharts needs browser dimensions)
     const chartContainer = document.querySelector('.recharts-responsive-container');
     expect(chartContainer).toBeInTheDocument();
@@ -110,12 +110,12 @@ describe('AssetAllocationChart', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       },
       BND: {
-        ticker: 'BND',
+        isin: 'BND',
         price: 73.00,
         timestamp: '2024-12-01T12:00:00Z',
       },
@@ -155,7 +155,7 @@ describe('AssetAllocationChart', () => {
 
     const prices: Record<string, PriceData> = {
       AOA: {
-        ticker: 'AOA',
+        isin: 'AOA',
         price: 60.00,
         timestamp: '2024-12-01T12:00:00Z',
       },
@@ -208,7 +208,7 @@ describe('AssetAllocationChart', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       },
@@ -244,7 +244,7 @@ describe('AssetAllocationChart', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       },

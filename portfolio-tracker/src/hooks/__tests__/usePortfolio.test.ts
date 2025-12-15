@@ -57,7 +57,7 @@ describe('usePortfolio', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       },
@@ -135,12 +135,12 @@ describe('usePortfolio', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       },
       BND: {
-        ticker: 'BND',
+        isin: 'BND',
         price: 73.00,
         timestamp: '2024-12-01T12:00:00Z',
       },
@@ -215,7 +215,7 @@ describe('usePortfolio', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       },
@@ -263,7 +263,7 @@ describe('usePortfolio', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       },
@@ -324,7 +324,7 @@ describe('usePortfolio', () => {
 
     const initialPrices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       },
@@ -344,7 +344,7 @@ describe('usePortfolio', () => {
     // Update prices
     const updatedPrices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 250.00,
         timestamp: '2024-12-02T12:00:00Z',
       },
@@ -386,7 +386,7 @@ describe('usePortfolio', () => {
     const { result } = renderHook(() => usePortfolio());
 
     expect(typeof result.current.recalculate).toBe('function');
-    
+
     // Should not throw when called
     expect(() => result.current.recalculate()).not.toThrow();
   });
@@ -415,7 +415,7 @@ describe('usePortfolio', () => {
 
     const prices: Record<string, PriceData> = {
       AOA: {
-        ticker: 'AOA',
+        isin: 'AOA',
         price: 60.00,
         timestamp: '2024-12-01T12:00:00Z',
       },

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { PortfolioValueCard } from '../PortfolioValueCard';
 import { usePortfolioStore } from '@/store/portfolioStore';
 import { usePriceStore } from '@/store/priceStore';
@@ -21,10 +22,8 @@ describe('PortfolioValueCard', () => {
 
     usePriceStore.setState({
       prices: {},
-      loadingTickers: new Set(),
       errors: {},
-      lastFetchTime: null,
-      priceSource: null,
+      lastFetch: null,
     });
   });
 
@@ -57,9 +56,11 @@ describe('PortfolioValueCard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -69,15 +70,15 @@ describe('PortfolioValueCard', () => {
     render(<PortfolioValueCard />);
 
     // Check total value is displayed
-    expect(screen.getByText(/\$2,355/)).toBeInTheDocument();
+    expect(screen.getByText(/€2,355/)).toBeInTheDocument();
 
     // Check P&L is displayed with positive formatting
-    expect(screen.getByText(/\$150/)).toBeInTheDocument();
+    expect(screen.getByText(/€150/)).toBeInTheDocument();
     expect(screen.getByText(/\+6\.80%/)).toBeInTheDocument();
 
     // Check cost basis is displayed
     expect(screen.getByText(/Cost Basis:/)).toBeInTheDocument();
-    expect(screen.getByText(/\$2,205/)).toBeInTheDocument();
+    expect(screen.getByText(/€2,205/)).toBeInTheDocument();
 
     // Check for profit indicator (TrendingUp icon)
     const profitIndicators = document.querySelectorAll('.text-green-600, .dark\\:text-green-400');
@@ -104,9 +105,11 @@ describe('PortfolioValueCard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -116,10 +119,10 @@ describe('PortfolioValueCard', () => {
     render(<PortfolioValueCard />);
 
     // Check total value
-    expect(screen.getByText(/\$2,355/)).toBeInTheDocument();
+    expect(screen.getByText(/€2,355/)).toBeInTheDocument();
 
     // Check P&L shows loss (absolute value displayed, but negative in data)
-    expect(screen.getByText(/\$145/)).toBeInTheDocument();
+    expect(screen.getByText(/€145/)).toBeInTheDocument();
     expect(screen.getByText(/-5\.80%/)).toBeInTheDocument();
 
     // Check for loss indicator (red color)
@@ -147,9 +150,11 @@ describe('PortfolioValueCard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -159,7 +164,7 @@ describe('PortfolioValueCard', () => {
     render(<PortfolioValueCard />);
 
     // Check P&L is zero
-    expect(screen.getByText(/\$0\.00/)).toBeInTheDocument();
+    expect(screen.getByText(/€0\.00/)).toBeInTheDocument();
     expect(screen.getByText(/0\.00%/)).toBeInTheDocument();
 
     // Check for neutral color (gray)
@@ -187,9 +192,11 @@ describe('PortfolioValueCard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -200,10 +207,10 @@ describe('PortfolioValueCard', () => {
 
     // Check large value with thousands separators
     // Total value: 5000 × 235.50 = 1,177,500
-    expect(screen.getByText(/\$1,177,500/)).toBeInTheDocument();
+    expect(screen.getByText(/€1,177,500/)).toBeInTheDocument();
 
     // P&L: (1,177,500 - 1,000,000) = 177,500
-    expect(screen.getByText(/\$177,500/)).toBeInTheDocument();
+    expect(screen.getByText(/€177,500/)).toBeInTheDocument();
   });
 
   it('should have accessible structure', () => {
@@ -226,9 +233,11 @@ describe('PortfolioValueCard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -265,9 +274,11 @@ describe('PortfolioValueCard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -277,7 +288,7 @@ describe('PortfolioValueCard', () => {
     render(<PortfolioValueCard />);
 
     // Check for responsive classes (sm:)
-    const element = screen.getByText(/\$2,355/).closest('div');
+    const element = screen.getByText(/€2,355/).closest('div');
     expect(element?.className).toContain('sm:');
   });
 });

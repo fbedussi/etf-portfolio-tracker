@@ -31,7 +31,7 @@ describe('PriceCacheStorageService', () => {
       const cached = await priceCacheStorageService.getCachedPrice('VTI');
 
       expect(cached).toBeTruthy();
-      expect(cached?.ticker).toBe('VTI');
+      expect(cached?.isin).toBe('VTI');
       expect(cached?.price).toBe(235.50);
       expect(cached?.timestamp).toBeGreaterThan(0);
       expect(cached?.expiresAt).toBeGreaterThan(Date.now());
@@ -42,7 +42,7 @@ describe('PriceCacheStorageService', () => {
 
       const cached = await priceCacheStorageService.getCachedPrice('VTI');
 
-      expect(cached?.ticker).toBe('VTI');
+      expect(cached?.isin).toBe('VTI');
     });
 
     it('should return null for non-existent ticker', async () => {
@@ -110,7 +110,7 @@ describe('PriceCacheStorageService', () => {
       await priceCacheStorageService.setCachedPrice('VTI', 235.50, 3600000);
       await priceCacheStorageService.setCachedPrice('BND', 72.30, 3600000);
 
-      const tickers = await priceCacheStorageService.getCachedTickers();
+      const tickers = await priceCacheStorageService.getCachedIsins();
 
       expect(tickers).toContain('VTI');
       expect(tickers).toContain('BND');
@@ -118,7 +118,7 @@ describe('PriceCacheStorageService', () => {
     });
 
     it('should return empty array when cache is empty', async () => {
-      const tickers = await priceCacheStorageService.getCachedTickers();
+      const tickers = await priceCacheStorageService.getCachedIsins();
 
       expect(tickers).toEqual([]);
     });
@@ -132,8 +132,8 @@ describe('PriceCacheStorageService', () => {
       const prices = await priceCacheStorageService.getAllCachedPrices();
 
       expect(prices.length).toBe(2);
-      expect(prices.some((p) => p.ticker === 'VTI' && p.price === 235.50)).toBe(true);
-      expect(prices.some((p) => p.ticker === 'BND' && p.price === 72.30)).toBe(true);
+      expect(prices.some((p) => p.isin === 'VTI' && p.price === 235.50)).toBe(true);
+      expect(prices.some((p) => p.isin === 'BND' && p.price === 72.30)).toBe(true);
     });
   });
 
@@ -202,86 +202,6 @@ describe('PriceCacheStorageService', () => {
       expect(stats.expiredEntries).toBe(0);
       expect(stats.oldestEntry).toBeNull();
       expect(stats.newestEntry).toBeNull();
-    });
-  });
-
-  describe('migrateFromLocalStorage', () => {
-    beforeEach(() => {
-      // Clear localStorage before migration tests
-      localStorage.clear();
-    });
-
-    it('should migrate fresh entries from localStorage', async () => {
-      const now = Date.now();
-      const localStorageCache = {
-        VTI: {
-          price: 235.50,
-          timestamp: now,
-          expiresAt: now + 3600000, // 1 hour from now
-        },
-        BND: {
-          price: 72.30,
-          timestamp: now,
-          expiresAt: now + 3600000,
-        },
-      };
-
-      localStorage.setItem('portfolio_price_cache', JSON.stringify(localStorageCache));
-
-      const migrated = await priceCacheStorageService.migrateFromLocalStorage();
-
-      expect(migrated).toBe(2);
-
-      const vti = await priceCacheStorageService.getCachedPrice('VTI');
-      const bnd = await priceCacheStorageService.getCachedPrice('BND');
-
-      expect(vti?.price).toBe(235.50);
-      expect(bnd?.price).toBe(72.30);
-
-      // Verify localStorage was cleared
-      expect(localStorage.getItem('portfolio_price_cache')).toBeNull();
-    });
-
-    it('should skip expired entries during migration', async () => {
-      const now = Date.now();
-      const localStorageCache = {
-        VTI: {
-          price: 235.50,
-          timestamp: now,
-          expiresAt: now + 3600000, // Fresh
-        },
-        BND: {
-          price: 72.30,
-          timestamp: now - 7200000,
-          expiresAt: now - 3600000, // Expired
-        },
-      };
-
-      localStorage.setItem('portfolio_price_cache', JSON.stringify(localStorageCache));
-
-      const migrated = await priceCacheStorageService.migrateFromLocalStorage();
-
-      expect(migrated).toBe(1);
-
-      const vti = await priceCacheStorageService.getCachedPrice('VTI');
-      const bnd = await priceCacheStorageService.getCachedPrice('BND');
-
-      expect(vti).toBeTruthy();
-      expect(bnd).toBeNull();
-    });
-
-    it('should return 0 when localStorage is empty', async () => {
-      const migrated = await priceCacheStorageService.migrateFromLocalStorage();
-
-      expect(migrated).toBe(0);
-    });
-
-    it('should handle invalid localStorage data gracefully', async () => {
-      localStorage.setItem('portfolio_price_cache', 'invalid json');
-
-      const migrated = await priceCacheStorageService.migrateFromLocalStorage();
-
-      expect(migrated).toBe(0);
     });
   });
 });

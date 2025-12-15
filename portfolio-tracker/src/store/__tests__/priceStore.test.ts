@@ -14,30 +14,30 @@ describe('priceStore', () => {
       // Set some prices
       const mockPrices: Record<string, PriceData> = {
         VWCE: {
-          ticker: 'VWCE',
+          isin: 'VWCE',
           price: 100,
           timestamp: Date.now(),
           currency: 'USD',
           source: 'api',
         },
         AGGH: {
-          ticker: 'AGGH',
+          isin: 'AGGH',
           price: 50,
           timestamp: Date.now(),
           currency: 'USD',
           source: 'api',
         },
       };
-      
+
       usePriceStore.getState().setPrices(mockPrices);
-      
+
       // Verify prices are set
       expect(Object.keys(usePriceStore.getState().prices)).toHaveLength(2);
       expect(usePriceStore.getState().lastFetch).not.toBeNull();
-      
+
       // Clear all prices
       usePriceStore.getState().clearAllPrices();
-      
+
       // Verify all state is cleared
       const state = usePriceStore.getState();
       expect(state.prices).toEqual({});
@@ -50,10 +50,10 @@ describe('priceStore', () => {
       // Manually set isFetching to true
       usePriceStore.setState({ isFetching: true });
       expect(usePriceStore.getState().isFetching).toBe(true);
-      
+
       // Clear all prices
       usePriceStore.getState().clearAllPrices();
-      
+
       // Verify isFetching is reset
       expect(usePriceStore.getState().isFetching).toBe(false);
     });
@@ -69,13 +69,13 @@ describe('priceStore', () => {
           },
         },
       });
-      
+
       // Verify cache is set
       expect(Object.keys(usePriceStore.getState().cache)).toHaveLength(1);
-      
+
       // Clear all prices
       usePriceStore.getState().clearAllPrices();
-      
+
       // Verify cache is cleared
       expect(usePriceStore.getState().cache).toEqual({});
     });
@@ -87,10 +87,10 @@ describe('priceStore', () => {
       expect(initialState.cache).toEqual({});
       expect(initialState.isFetching).toBe(false);
       expect(initialState.lastFetch).toBeNull();
-      
+
       // Clear should not throw
       expect(() => usePriceStore.getState().clearAllPrices()).not.toThrow();
-      
+
       // Verify store is still empty
       const finalState = usePriceStore.getState();
       expect(finalState.prices).toEqual({});
@@ -105,14 +105,14 @@ describe('priceStore', () => {
       // Set prices and cache
       const mockPrices: Record<string, PriceData> = {
         VWCE: {
-          ticker: 'VWCE',
+          isin: 'VWCE',
           price: 100,
           timestamp: Date.now(),
           currency: 'USD',
           source: 'api',
         },
       };
-      
+
       usePriceStore.getState().setPrices(mockPrices);
       usePriceStore.setState({
         cache: {
@@ -123,10 +123,10 @@ describe('priceStore', () => {
           },
         },
       });
-      
+
       // Clear cache
       usePriceStore.getState().clearCache();
-      
+
       // Verify cache and prices are cleared
       const state = usePriceStore.getState();
       expect(state.prices).toEqual({});

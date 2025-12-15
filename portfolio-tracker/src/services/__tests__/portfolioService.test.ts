@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { 
-  calculateHoldings, 
+import {
+  calculateHoldings,
   calculatePortfolioValue,
   calculateProfitLoss,
   calculateETFProfitLoss,
@@ -266,11 +266,11 @@ describe('portfolioService', () => {
 
       // Total quantity: 10 + 5 - 3 + 8 - 5 = 15
       expect(holdings.VTI.quantity).toBe(15);
-      
+
       // Total cost: (10*200) + (5*210) + (-3*220) + (8*230) + (-5*240)
       //           = 2000 + 1050 - 660 + 1840 - 1200 = 3030
       expect(holdings.VTI.totalCost).toBe(3030);
-      
+
       // Cost basis: 3030 / 15 = 202
       expect(holdings.VTI.costBasis).toBeCloseTo(202, 2);
     });
@@ -288,7 +288,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -315,12 +315,12 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
         BND: {
-          ticker: 'BND',
+          isin: 'BND',
           price: 73.00,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -350,7 +350,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -398,7 +398,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -420,7 +420,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -444,7 +444,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -468,7 +468,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 215.00,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -497,12 +497,12 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
         BND: {
-          ticker: 'BND',
+          isin: 'BND',
           price: 73.00,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -531,7 +531,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -553,7 +553,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -580,7 +580,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -608,7 +608,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 225.40,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -631,7 +631,7 @@ describe('portfolioService', () => {
       };
 
       const price: PriceData = {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       };
@@ -651,7 +651,7 @@ describe('portfolioService', () => {
       };
 
       const price: PriceData = {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 215.00,
         timestamp: '2024-12-01T12:00:00Z',
       };
@@ -683,7 +683,7 @@ describe('portfolioService', () => {
       };
 
       const price: PriceData = {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       };
@@ -701,7 +701,7 @@ describe('portfolioService', () => {
       };
 
       const price: PriceData = {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: '2024-12-01T12:00:00Z',
       };
@@ -719,7 +719,7 @@ describe('portfolioService', () => {
       };
 
       const price: PriceData = {
-        ticker: 'MOON',
+        isin: 'MOON',
         price: 50.00,
         timestamp: '2024-12-01T12:00:00Z',
       };
@@ -739,7 +739,7 @@ describe('portfolioService', () => {
       };
 
       const price: PriceData = {
-        ticker: 'CRASH',
+        isin: 'CRASH',
         price: 5.00,
         timestamp: '2024-12-01T12:00:00Z',
       };
@@ -759,7 +759,7 @@ describe('portfolioService', () => {
       };
 
       const price: PriceData = {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 225.40,
         timestamp: '2024-12-01T12:00:00Z',
       };
@@ -779,7 +779,7 @@ describe('portfolioService', () => {
       };
 
       const price: PriceData = {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.75,
         timestamp: '2024-12-01T12:00:00Z',
       };
@@ -818,7 +818,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -866,12 +866,12 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
         BND: {
-          ticker: 'BND',
+          isin: 'BND',
           price: 73.00,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -886,7 +886,7 @@ describe('portfolioService', () => {
       // Bonds: (2190.00 / 5722.50) × 100 = 38.27%
       expect(allocation.Stocks).toBeCloseTo(61.73, 2);
       expect(allocation.Bonds).toBeCloseTo(38.27, 2);
-      
+
       // Check that percentages sum to ~100%
       const total = Object.values(allocation).reduce((sum, val) => sum + val, 0);
       expect(total).toBeCloseTo(100, 1);
@@ -916,7 +916,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 220.00,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -982,17 +982,17 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 220.00,
           timestamp: '2024-12-01T12:00:00Z',
         },
         BND: {
-          ticker: 'BND',
+          isin: 'BND',
           price: 72.00,
           timestamp: '2024-12-01T12:00:00Z',
         },
         VNQ: {
-          ticker: 'VNQ',
+          isin: 'VNQ',
           price: 80.00,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -1010,7 +1010,7 @@ describe('portfolioService', () => {
       expect(allocation.Stocks).toBeCloseTo(46.22, 2);
       expect(allocation.Bonds).toBeCloseTo(45.38, 2);
       expect(allocation['Real Estate']).toBeCloseTo(8.40, 2);
-      
+
       const total = Object.values(allocation).reduce((sum, val) => sum + val, 0);
       expect(total).toBeCloseTo(100, 1);
     });
@@ -1038,7 +1038,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         AOA: {
-          ticker: 'AOA',
+          isin: 'AOA',
           price: 60.00,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -1088,7 +1088,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -1135,7 +1135,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -1166,7 +1166,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -1199,7 +1199,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.50,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -1233,7 +1233,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           price: 235.75,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -1268,7 +1268,7 @@ describe('portfolioService', () => {
 
       const prices: Record<string, PriceData> = {
         MIXED: {
-          ticker: 'MIXED',
+          isin: 'MIXED',
           price: 50.00,
           timestamp: '2024-12-01T12:00:00Z',
         },
@@ -1282,7 +1282,7 @@ describe('portfolioService', () => {
       // Total allocation: 90% (missing 10%)
       expect(allocation.Stocks).toBeCloseTo(60, 2);
       expect(allocation.Bonds).toBeCloseTo(30, 2);
-      
+
       const total = Object.values(allocation).reduce((sum, val) => sum + val, 0);
       expect(total).toBeCloseTo(90, 1);
     });

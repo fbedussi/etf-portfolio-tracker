@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
 import { usePrices } from '../usePrices';
 import { priceService, PriceServiceError } from '@/services/priceService';
 import { cacheService } from '@/services/cacheService';
@@ -14,14 +14,14 @@ vi.mock('@/services/priceService', () => ({
     code: string;
     ticker?: string;
     userMessage: string;
-    
+
     constructor(message: string, code: string, ticker?: string, userMessage?: string) {
       super(message);
       this.code = code;
       this.ticker = ticker;
       this.userMessage = userMessage || message;
     }
-    
+
     getUserFriendlyMessage(): string {
       switch (this.code) {
         case 'NETWORK_ERROR':
@@ -66,7 +66,7 @@ describe('usePrices', () => {
         price: 235.50,
         timestamp: Date.now(),
         currency: 'USD',
-        source: 'alphavantage' as const,
+        source: 'api' as const,
       };
 
       (cacheService.getCachedPrice as any).mockReturnValue(null);
@@ -105,8 +105,8 @@ describe('usePrices', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    it('should handle errors for individual tickers', async () => {
-      const error = new PriceServiceError('Invalid ticker', 'INVALID_TICKER', 'INVALID');
+    it('should handle errors for individual isins', async () => {
+      const error = new PriceServiceError('Invalid isin', 'INVALID_ISIN', 'INVALID');
 
       (cacheService.getCachedPrice as any).mockReturnValue(null);
       (priceService.fetchPrice as any).mockRejectedValue(error);
@@ -118,9 +118,9 @@ describe('usePrices', () => {
       });
 
       expect(result.current.errors['INVALID']).toBeDefined();
-      expect(result.current.errors['INVALID'].ticker).toBe('INVALID');
-      expect(result.current.errors['INVALID'].code).toBe('INVALID_TICKER');
-      expect(result.current.errors['INVALID'].message).toContain('Price unavailable');
+      expect(result.current.errors['INVALID'].isin).toBe('INVALID');
+      expect(result.current.errors['INVALID'].code).toBe('INVALID_ISIN');
+      expect(result.current.errors['INVALID'].message).toContain('Invalid isin');
       expect(result.current.isLoading).toBe(false);
     });
 
@@ -130,7 +130,7 @@ describe('usePrices', () => {
         price: 235.50,
         timestamp: Date.now(),
         currency: 'USD',
-        source: 'alphavantage' as const,
+        source: 'api' as const,
       };
 
       const error = new PriceServiceError('Invalid ticker', 'INVALID_TICKER', 'INVALID');
@@ -161,7 +161,7 @@ describe('usePrices', () => {
         price: 235.50,
         timestamp: Date.now(),
         currency: 'USD',
-        source: 'alphavantage' as const,
+        source: 'api' as const,
       };
 
       (cacheService.getCachedPrice as any).mockReturnValue(null);
@@ -184,7 +184,7 @@ describe('usePrices', () => {
         price: 235.50,
         timestamp: Date.now(),
         currency: 'USD',
-        source: 'alphavantage' as const,
+        source: 'api' as const,
       };
 
       (cacheService.getCachedPrice as any).mockReturnValue(null);
@@ -197,7 +197,7 @@ describe('usePrices', () => {
           await result.current.fetchPrices(['VTI']);
         });
 
-        expect(result.current.loadingTickers).toEqual([]);
+        expect(result.current.loadingIsins).toEqual([]);
       }
     });
 
@@ -222,7 +222,7 @@ describe('usePrices', () => {
         price: 235.50,
         timestamp: Date.now(),
         currency: 'USD',
-        source: 'alphavantage' as const,
+        source: 'api' as const,
       };
 
       (cacheService.getCachedPrice as any).mockReturnValue(null);

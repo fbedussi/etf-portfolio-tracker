@@ -25,7 +25,7 @@ describe('CacheService', () => {
       const result = await cacheService.getCachedPrice('VTI');
 
       expect(result).not.toBeNull();
-      expect(result?.ticker).toBe('VTI');
+      expect(result?.isin).toBe('VTI');
       expect(result?.price).toBe(235.50);
       expect(result?.source).toBe('cache');
     });
@@ -38,7 +38,7 @@ describe('CacheService', () => {
 
       expect(result1).not.toBeNull();
       expect(result2).not.toBeNull();
-      expect(result1?.ticker).toBe(result2?.ticker);
+      expect(result1?.isin).toBe(result2?.isin);
     });
   });
 
@@ -67,14 +67,14 @@ describe('CacheService', () => {
       const result = await cacheService.getCachedPrice('VTI');
 
       expect(result).not.toBeNull();
-      expect(result?.ticker).toBe('VTI');
+      expect(result?.isin).toBe('VTI');
     });
   });
 
   describe('cachePriceData', () => {
     it('should cache a PriceData object', async () => {
       await cacheService.cachePriceData({
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
         timestamp: Date.now(),
         currency: 'USD',
@@ -141,7 +141,7 @@ describe('CacheService', () => {
       await cacheService.setCachedPrice('VTI', 235.50);
       await cacheService.setCachedPrice('BND', 72.30);
 
-      const tickers = await cacheService.getCachedTickers();
+      const tickers = await cacheService.getCachedIsins();
 
       expect(tickers).toContain('VTI');
       expect(tickers).toContain('BND');
@@ -149,7 +149,7 @@ describe('CacheService', () => {
     });
 
     it('should return empty array when cache is empty', async () => {
-      const tickers = await cacheService.getCachedTickers();
+      const tickers = await cacheService.getCachedIsins();
 
       expect(tickers).toEqual([]);
     });

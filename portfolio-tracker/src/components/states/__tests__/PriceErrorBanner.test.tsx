@@ -22,7 +22,7 @@ describe('PriceErrorBanner', () => {
     it('should render single error message', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Price unavailable for VTI. Please check the ticker symbol.',
           code: 'INVALID_TICKER',
           timestamp: Date.now(),
@@ -39,13 +39,13 @@ describe('PriceErrorBanner', () => {
     it('should render multiple errors in a list', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Network error',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
         },
         BND: {
-          ticker: 'BND',
+          isin: 'BND',
           message: 'Timeout error',
           code: 'TIMEOUT',
           timestamp: Date.now(),
@@ -62,7 +62,7 @@ describe('PriceErrorBanner', () => {
     it('should display warning style for cache fallback errors', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Using cached data from 5 minutes ago',
           code: 'FALLBACK_CACHE',
           timestamp: Date.now(),
@@ -78,7 +78,7 @@ describe('PriceErrorBanner', () => {
     it('should display error style for non-cache errors', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Network error',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
@@ -96,7 +96,7 @@ describe('PriceErrorBanner', () => {
     it('should render retry button when onRetry provided', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Error',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
@@ -112,7 +112,7 @@ describe('PriceErrorBanner', () => {
       const user = userEvent.setup();
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Error',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
@@ -130,7 +130,7 @@ describe('PriceErrorBanner', () => {
     it('should render dismiss all button when onDismissAll provided', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Error',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
@@ -146,7 +146,7 @@ describe('PriceErrorBanner', () => {
       const user = userEvent.setup();
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Error',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
@@ -164,13 +164,13 @@ describe('PriceErrorBanner', () => {
     it('should render individual dismiss buttons for multiple errors', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Error 1',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
         },
         BND: {
-          ticker: 'BND',
+          isin: 'BND',
           message: 'Error 2',
           code: 'TIMEOUT',
           timestamp: Date.now(),
@@ -187,13 +187,13 @@ describe('PriceErrorBanner', () => {
       const user = userEvent.setup();
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Error 1',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
         },
         BND: {
-          ticker: 'BND',
+          isin: 'BND',
           message: 'Error 2',
           code: 'TIMEOUT',
           timestamp: Date.now(),
@@ -214,7 +214,7 @@ describe('PriceErrorBanner', () => {
     it('should have aria-hidden on decorative icon', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Error',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
@@ -230,13 +230,13 @@ describe('PriceErrorBanner', () => {
     it('should have accessible labels for dismiss buttons', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Error 1',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
         },
         BND: {
-          ticker: 'BND',
+          isin: 'BND',
           message: 'Error 2',
           code: 'TIMEOUT',
           timestamp: Date.now(),
@@ -261,13 +261,13 @@ describe('PriceErrorBanner', () => {
     it('should display ticker and message for multiple errors', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Network error occurred',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
         },
         BND: {
-          ticker: 'BND',
+          isin: 'BND',
           message: 'Timeout error',
           code: 'TIMEOUT',
           timestamp: Date.now(),
@@ -285,7 +285,7 @@ describe('PriceErrorBanner', () => {
     it('should show singular "error" for single error count', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Network error occurred',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
@@ -302,13 +302,13 @@ describe('PriceErrorBanner', () => {
     it('should show plural "errors" for multiple error count', () => {
       const errors: Record<string, PriceError> = {
         VTI: {
-          ticker: 'VTI',
+          isin: 'VTI',
           message: 'Error 1',
           code: 'NETWORK_ERROR',
           timestamp: Date.now(),
         },
         BND: {
-          ticker: 'BND',
+          isin: 'BND',
           message: 'Error 2',
           code: 'TIMEOUT',
           timestamp: Date.now(),

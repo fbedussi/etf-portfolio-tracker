@@ -21,10 +21,8 @@ describe('HoldingsTable', () => {
 
     usePriceStore.setState({
       prices: {},
-      loadingTickers: new Set(),
       errors: {},
-      lastFetchTime: null,
-      priceSource: null,
+      lastFetch: null,
     });
   });
 
@@ -58,9 +56,11 @@ describe('HoldingsTable', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -73,8 +73,8 @@ describe('HoldingsTable', () => {
     expect(screen.getByText('VTI')).toBeInTheDocument();
     expect(screen.getByText('Vanguard Total Stock Market ETF')).toBeInTheDocument();
     expect(screen.getByText('10')).toBeInTheDocument();
-    expect(screen.getByText(/\$235\.50/)).toBeInTheDocument();
-    expect(screen.getByText(/\$2,355/)).toBeInTheDocument();
+    expect(screen.getByText(/€235\.50/)).toBeInTheDocument();
+    expect(screen.getByText(/€2,355/)).toBeInTheDocument();
   });
 
   it('should display multiple holdings', () => {
@@ -110,14 +110,18 @@ describe('HoldingsTable', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
       BND: {
-        ticker: 'BND',
+        isin: 'BND',
         price: 73.00,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -164,14 +168,18 @@ describe('HoldingsTable', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50, // Profit
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
       BND: {
-        ticker: 'BND',
+        isin: 'BND',
         price: 73.00, // Loss
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -218,8 +226,16 @@ describe('HoldingsTable', () => {
     };
 
     const prices: Record<string, PriceData> = {
-      VTI: { ticker: 'VTI', price: 235.50, timestamp: '2024-12-01T12:00:00Z' },
-      BND: { ticker: 'BND', price: 73.00, timestamp: '2024-12-01T12:00:00Z' },
+      VTI: {
+        isin: 'VTI', price: 235.50, timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
+      },
+      BND: {
+        isin: 'BND', price: 73.00, timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
+      },
     };
 
     usePortfolioStore.setState({ portfolio });
@@ -228,7 +244,7 @@ describe('HoldingsTable', () => {
     render(<HoldingsTable />);
 
     const rows = screen.getAllByRole('row');
-    const tickerCells = rows.slice(1).map((row) => 
+    const tickerCells = rows.slice(1).map((row) =>
       row.querySelector('td')?.textContent
     );
 
@@ -238,7 +254,7 @@ describe('HoldingsTable', () => {
 
   it('should sort columns when clicked', async () => {
     const user = userEvent.setup();
-    
+
     const portfolio: Portfolio = {
       name: 'Test Portfolio',
       targetAllocation: { Stocks: 100 },
@@ -267,8 +283,16 @@ describe('HoldingsTable', () => {
     };
 
     const prices: Record<string, PriceData> = {
-      VTI: { ticker: 'VTI', price: 235.50, timestamp: '2024-12-01T12:00:00Z' },
-      BND: { ticker: 'BND', price: 73.00, timestamp: '2024-12-01T12:00:00Z' },
+      VTI: {
+        isin: 'VTI', price: 235.50, timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
+      },
+      BND: {
+        isin: 'BND', price: 73.00, timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
+      },
     };
 
     usePortfolioStore.setState({ portfolio });
@@ -281,7 +305,7 @@ describe('HoldingsTable', () => {
 
     const rows = screen.getAllByRole('row');
     const firstDataRow = rows[1];
-    
+
     expect(firstDataRow.textContent).toContain('VTI');
   });
 
@@ -345,7 +369,11 @@ describe('HoldingsTable', () => {
     };
 
     const prices: Record<string, PriceData> = {
-      VTI: { ticker: 'VTI', price: 235.50, timestamp: '2024-12-01T12:00:00Z' },
+      VTI: {
+        isin: 'VTI', price: 235.50, timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
+      },
     };
 
     usePortfolioStore.setState({ portfolio });

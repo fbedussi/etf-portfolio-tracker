@@ -20,10 +20,8 @@ describe('Dashboard', () => {
 
     usePriceStore.setState({
       prices: {},
-      loadingTickers: new Set(),
       errors: {},
-      lastFetchTime: null,
-      priceSource: null,
+      lastFetch: null,
     });
   });
 
@@ -47,9 +45,11 @@ describe('Dashboard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -85,9 +85,11 @@ describe('Dashboard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -97,7 +99,7 @@ describe('Dashboard', () => {
     render(<Dashboard />);
 
     // Check portfolio value is displayed (appears in value card)
-    const valueElements = screen.getAllByText(/\$2,355/);
+    const valueElements = screen.getAllByText(/€2,355/);
     expect(valueElements.length).toBeGreaterThan(0);
 
     // Check holdings table shows ticker
@@ -145,14 +147,18 @@ describe('Dashboard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
       BND: {
-        ticker: 'BND',
+        isin: 'BND',
         price: 73.00,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -187,9 +193,11 @@ describe('Dashboard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
@@ -223,9 +231,11 @@ describe('Dashboard', () => {
 
     const prices: Record<string, PriceData> = {
       VTI: {
-        ticker: 'VTI',
+        isin: 'VTI',
         price: 235.50,
-        timestamp: '2024-12-01T12:00:00Z',
+        timestamp: 0,
+        currency: 'EUR',
+        source: 'api'
       },
     };
 
