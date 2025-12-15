@@ -39,13 +39,13 @@ export function formatRelativeTime(timestamp: number | null): string {
 /**
  * Format currency value with locale support
  * @param value - The numeric value to format
- * @param currency - Currency code (default: 'USD')
+ * @param currency - Currency code (default: 'EUR')
  * @param locale - Locale string (default: user's locale)
  * @returns Formatted currency string
  */
 export function formatCurrency(
   value: number | null | undefined,
-  currency = 'USD',
+  currency = 'EUR',
   locale?: string
 ): string {
   if (value === null || value === undefined) {

@@ -35,7 +35,7 @@ export class CacheService {
         isin: cached.isin,
         price: cached.price,
         timestamp: cached.timestamp,
-        currency: 'USD',
+        currency: 'EUR',
         source: 'cache',
       };
     } catch (error) {

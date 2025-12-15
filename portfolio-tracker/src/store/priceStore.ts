@@ -91,7 +91,7 @@ export const usePriceStore = create<PriceState>((set, get) => ({
       isin: ticker,
       price: cached.price,
       timestamp: cached.timestamp,
-      currency: 'USD', // TODO: Make configurable
+      currency: 'EUR', // TODO: Make configurable
       source: 'cache' as const,
     };
   },
